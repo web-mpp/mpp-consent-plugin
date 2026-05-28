@@ -1,0 +1,25 @@
+# Node
+node_modules/
+npm-debug.log*
+
+# Composer
+vendor/
+composer.lock
+
+# Build artifacts
+*.min.js
+dist/
+*.zip
+
+# IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+
+# WP
+wp-config.php

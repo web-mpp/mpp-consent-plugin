@@ -1,0 +1,112 @@
+{
+  "google-site-kit": {
+    "provider": "Google",
+    "category": "statistics",
+    "cookies": [
+      {"name": "_ga",   "duration": "2 years",  "purpose": "Distinguishes unique users"},
+      {"name": "_ga_*", "duration": "2 years",  "purpose": "Persists session state"},
+      {"name": "_gid",  "duration": "24 hours", "purpose": "Distinguishes users"},
+      {"name": "_gat",  "duration": "1 minute", "purpose": "Throttle request rate"}
+    ]
+  },
+  "woocommerce": {
+    "provider": "WooCommerce",
+    "category": "essential",
+    "cookies": [
+      {"name": "woocommerce_cart_hash",     "duration": "session", "purpose": "Stores cart hash"},
+      {"name": "woocommerce_items_in_cart", "duration": "session", "purpose": "Cart item count"},
+      {"name": "wc_session_cookie_*",       "duration": "2 days",  "purpose": "WooCommerce session"}
+    ]
+  },
+  "jetpack": {
+    "provider": "Automattic / Jetpack",
+    "category": "statistics",
+    "cookies": [
+      {"name": "_jetpack_*", "duration": "session", "purpose": "Jetpack stats"},
+      {"name": "__jid",      "duration": "session", "purpose": "Jetpack identity"}
+    ]
+  },
+  "facebook-for-woocommerce": {
+    "provider": "Meta",
+    "category": "marketing",
+    "cookies": [
+      {"name": "_fbp", "duration": "3 months", "purpose": "Facebook Pixel browser ID"},
+      {"name": "_fbc", "duration": "3 months", "purpose": "Facebook click ID"},
+      {"name": "fr",   "duration": "3 months", "purpose": "Facebook ad delivery and measurement"}
+    ]
+  },
+  "hotjar": {
+    "provider": "Hotjar",
+    "category": "statistics",
+    "cookies": [
+      {"name": "_hjid",         "duration": "1 year",   "purpose": "Hotjar user ID"},
+      {"name": "_hjFirstSeen",  "duration": "session",  "purpose": "First session marker"},
+      {"name": "_hjSession_*",  "duration": "30 mins",  "purpose": "Current session data"},
+      {"name": "_hjSessionUser_*", "duration": "1 year","purpose": "Session user continuity"}
+    ]
+  },
+  "elementor": {
+    "provider": "Elementor",
+    "category": "preferences",
+    "cookies": [
+      {"name": "elementor_viewed_27_days", "duration": "27 days", "purpose": "Tracks Elementor popups"},
+      {"name": "_elementor_*",             "duration": "session", "purpose": "Elementor editor state"}
+    ]
+  },
+  "linkedin-insight-tag": {
+    "provider": "LinkedIn",
+    "category": "marketing",
+    "cookies": [
+      {"name": "li_at",                "duration": "1 year",  "purpose": "LinkedIn authentication"},
+      {"name": "AnalyticsSyncHistory", "duration": "1 month", "purpose": "LinkedIn analytics sync"},
+      {"name": "bcookie",              "duration": "2 years", "purpose": "LinkedIn browser ID"},
+      {"name": "bscookie",             "duration": "2 years", "purpose": "LinkedIn secure browser ID"}
+    ]
+  },
+  "contact-form-7": {
+    "provider": "Contact Form 7",
+    "category": "essential",
+    "cookies": []
+  },
+  "wp-rocket": {
+    "provider": "WP Rocket",
+    "category": "essential",
+    "cookies": []
+  },
+  "mailchimp-for-wp": {
+    "provider": "Mailchimp for WordPress",
+    "category": "essential",
+    "cookies": []
+  },
+  "crisp": {
+    "provider": "Crisp",
+    "category": "statistics",
+    "cookies": [
+      {"name": "crisp-client/*", "duration": "6 months", "purpose": "Crisp chat session"}
+    ]
+  },
+  "intercom": {
+    "provider": "Intercom",
+    "category": "statistics",
+    "cookies": [
+      {"name": "intercom-id-*",      "duration": "9 months", "purpose": "Intercom visitor ID"},
+      {"name": "intercom-session-*", "duration": "1 week",   "purpose": "Intercom session"}
+    ]
+  },
+  "cloudflare": {
+    "provider": "Cloudflare",
+    "category": "essential",
+    "cookies": [
+      {"name": "__cflb",      "duration": "session", "purpose": "Load balancer affinity"},
+      {"name": "__cf_bm",     "duration": "30 mins", "purpose": "Bot management"},
+      {"name": "cf_clearance","duration": "1 day",   "purpose": "Cloudflare challenge clearance"}
+    ]
+  },
+  "recaptcha": {
+    "provider": "Google reCAPTCHA",
+    "category": "essential",
+    "cookies": [
+      {"name": "_GRECAPTCHA", "duration": "6 months", "purpose": "reCAPTCHA fraud prevention"}
+    ]
+  }
+}

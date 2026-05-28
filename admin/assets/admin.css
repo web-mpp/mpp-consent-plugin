@@ -1,0 +1,44 @@
+.wpcs-admin-wrap .wpcs-tab-content {
+	margin-top: 16px;
+}
+
+.wpcs-badge {
+	display: inline-block;
+	padding: 2px 8px;
+	border-radius: 3px;
+	font-size: 11px;
+	font-weight: 600;
+	background: #ddd;
+	color: #333;
+}
+
+.wpcs-badge-locked    { background: #6b7280; color: #fff; }
+.wpcs-badge-warning   { background: #f59e0b; color: #fff; }
+.wpcs-badge-granted   { background: #10b981; color: #fff; }
+.wpcs-badge-denied    { background: #ef4444; color: #fff; }
+.wpcs-badge-essential { background: #6b7280; color: #fff; }
+.wpcs-badge-statistics{ background: #3b82f6; color: #fff; }
+.wpcs-badge-marketing { background: #f59e0b; color: #fff; }
+.wpcs-badge-preferences{ background: #8b5cf6; color: #fff; }
+
+.wpcs-scanner-header {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin-bottom: 16px;
+}
+
+.wpcs-scan-status {
+	font-style: italic;
+	color: #666;
+}
+
+.wpcs-snippet-preview {
+	background: #1e1e2e;
+	color: #cdd6f4;
+	padding: 16px;
+	border-radius: 4px;
+	overflow-x: auto;
+	font-size: 12px;
+	line-height: 1.6;
+}
