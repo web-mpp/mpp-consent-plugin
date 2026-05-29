@@ -243,33 +243,38 @@ class WPCS_CookieScanner {
 		preg_match_all( '/<script(?![^>]+src)[^>]*>(.*?)<\/script>/si', $body, $inline_matches );
 		$inline_scripts = implode( "\n", $inline_matches[1] ?? [] );
 
-		// Match external src URLs against CDN map
-		foreach ( self::CDN_COOKIE_MAP as $pattern => $info ) {
-			$already_found = false;
+		// Build a reverse map: CDN key → inline patterns that signal the same service
+		$inline_by_cdn = [];
+		foreach ( self::INLINE_PATTERNS as $inline_pattern => $cdn_key ) {
+			$inline_by_cdn[ $cdn_key ][] = $inline_pattern;
+		}
 
+		foreach ( self::CDN_COOKIE_MAP as $cdn_pattern => $info ) {
+			if ( isset( $seen[ $info['provider'] ] ) ) continue;
+
+			$found = false;
+
+			// 1. Check external script src URLs
 			foreach ( $script_srcs as $src ) {
-				if ( preg_match( '/' . $pattern . '/i', $src ) ) {
-					$already_found = true;
+				if ( preg_match( '/' . $cdn_pattern . '/i', $src ) ) {
+					$found = true;
 					break;
 				}
 			}
 
-			// Fall back to inline script pattern detection
-			if ( ! $already_found && isset( self::INLINE_PATTERNS ) ) {
-				foreach ( self::INLINE_PATTERNS as $inline_pattern => $cdn_pattern ) {
-					if ( $cdn_pattern === $pattern || preg_match( '/' . $cdn_pattern . '/i', $pattern ) ) {
-						if ( preg_match( '/' . $inline_pattern . '/i', $inline_scripts ) ) {
-							$already_found = true;
-							break;
-						}
+			// 2. Check inline script patterns that map to this CDN entry
+			if ( ! $found && isset( $inline_by_cdn[ $cdn_pattern ] ) ) {
+				foreach ( $inline_by_cdn[ $cdn_pattern ] as $inline_pattern ) {
+					if ( preg_match( '/' . $inline_pattern . '/i', $inline_scripts ) ) {
+						$found = true;
+						break;
 					}
 				}
 			}
 
-			if ( ! $already_found ) continue;
-			if ( isset( $seen[ $info['provider'] ] ) ) continue;
-			$seen[ $info['provider'] ] = true;
+			if ( ! $found ) continue;
 
+			$seen[ $info['provider'] ] = true;
 			foreach ( $info['cookies'] as $cookie ) {
 				$results[] = [
 					'cookie_name' => $cookie['name'],
@@ -280,31 +285,6 @@ class WPCS_CookieScanner {
 					'source'      => 'page_scan',
 					'plugin_slug' => '',
 				];
-			}
-		}
-
-		// Also check inline scripts for patterns not covered by CDN URLs
-		foreach ( self::INLINE_PATTERNS as $inline_pattern => $cdn_key ) {
-			if ( ! preg_match( '/' . $inline_pattern . '/i', $inline_scripts ) ) continue;
-
-			// Find matching CDN entry
-			foreach ( self::CDN_COOKIE_MAP as $cdn_pattern => $info ) {
-				if ( $cdn_key === $cdn_pattern || preg_match( '/' . preg_quote( $cdn_key, '/' ) . '/i', $cdn_pattern ) ) {
-					if ( isset( $seen[ $info['provider'] ] ) ) break;
-					$seen[ $info['provider'] ] = true;
-					foreach ( $info['cookies'] as $cookie ) {
-						$results[] = [
-							'cookie_name' => $cookie['name'],
-							'provider'    => $info['provider'],
-							'category'    => $info['category'],
-							'purpose'     => $cookie['purpose'],
-							'duration'    => $cookie['duration'],
-							'source'      => 'page_scan',
-							'plugin_slug' => '',
-						];
-					}
-					break;
-				}
 			}
 		}
 
