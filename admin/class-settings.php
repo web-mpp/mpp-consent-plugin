@@ -109,9 +109,24 @@ class WPCS_SettingsAdmin {
 		// Locale texts — read from $input (stale-current bug — see appearance comment above)
 		$output['locale_texts'] = [];
 		if ( isset( $input['locale_texts'] ) && is_array( $input['locale_texts'] ) ) {
-			foreach ( $input['locale_texts'] as $loc => $text ) {
-				if ( preg_match( '/^[a-z]{2}(_[A-Z]{2})?$/', $loc ) ) {
-					$output['locale_texts'][ $loc ] = sanitize_textarea_field( $text );
+			foreach ( $input['locale_texts'] as $loc => $data ) {
+				if ( ! preg_match( '/^[a-z]{2}(_[A-Z]{2})?$/', $loc ) ) continue;
+
+				if ( is_array( $data ) ) {
+					$output['locale_texts'][ $loc ] = [
+						'banner_text'     => sanitize_textarea_field( $data['banner_text']     ?? '' ),
+						'btn_preferences' => sanitize_text_field(     $data['btn_preferences'] ?? '' ),
+						'btn_reject'      => sanitize_text_field(     $data['btn_reject']      ?? '' ),
+						'btn_accept'      => sanitize_text_field(     $data['btn_accept']      ?? '' ),
+						'modal_title'     => sanitize_text_field(     $data['modal_title']     ?? '' ),
+						'modal_intro'     => sanitize_textarea_field( $data['modal_intro']     ?? '' ),
+						'modal_accept'    => sanitize_text_field(     $data['modal_accept']    ?? '' ),
+						'modal_close'     => sanitize_text_field(     $data['modal_close']     ?? '' ),
+						'modal_save'      => sanitize_text_field(     $data['modal_save']      ?? '' ),
+					];
+				} else {
+					// Backwards compat: old plain-string format
+					$output['locale_texts'][ $loc ] = [ 'banner_text' => sanitize_textarea_field( $data ) ];
 				}
 			}
 		}
@@ -167,13 +182,24 @@ class WPCS_SettingsAdmin {
 		}
 		check_admin_referer( 'wpcs_admin_action' );
 
-		$raw_locale  = $_POST['locale'] ?? '';
-		$locale      = preg_match( '/^[a-z]{2}(_[A-Z]{2})?$/', $raw_locale ) ? $raw_locale : '';
-		$banner_text = sanitize_textarea_field( $_POST['banner_text'] ?? '' );
+		$raw_locale = $_POST['locale'] ?? '';
+		$locale     = preg_match( '/^[a-z]{2}(_[A-Z]{2})?$/', $raw_locale ) ? $raw_locale : '';
 
-		if ( $locale && $banner_text ) {
+		if ( $locale ) {
+			$locale_data = [
+				'banner_text'     => sanitize_textarea_field( $_POST['banner_text']     ?? '' ),
+				'btn_preferences' => sanitize_text_field(     $_POST['btn_preferences'] ?? '' ),
+				'btn_reject'      => sanitize_text_field(     $_POST['btn_reject']      ?? '' ),
+				'btn_accept'      => sanitize_text_field(     $_POST['btn_accept']      ?? '' ),
+				'modal_title'     => sanitize_text_field(     $_POST['modal_title']     ?? '' ),
+				'modal_intro'     => sanitize_textarea_field( $_POST['modal_intro']     ?? '' ),
+				'modal_accept'    => sanitize_text_field(     $_POST['modal_accept']    ?? '' ),
+				'modal_close'     => sanitize_text_field(     $_POST['modal_close']     ?? '' ),
+				'modal_save'      => sanitize_text_field(     $_POST['modal_save']      ?? '' ),
+			];
+
 			$locale_texts           = (array) WPCS_Settings::get( 'locale_texts' );
-			$locale_texts[ $locale ] = $banner_text;
+			$locale_texts[ $locale ] = $locale_data;
 			WPCS_Settings::update( [ 'locale_texts' => $locale_texts ] );
 		}
 

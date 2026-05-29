@@ -11,6 +11,12 @@ $granted    = $consent->get_categories();
 $policy_page_id = (int) $settings['cookie_policy_page_id'];
 $policy_url     = $policy_page_id > 0 ? get_permalink( $policy_page_id ) : '';
 
+$modal_title  = WPCS_Settings::get_locale_string( 'modal_title',  __( 'Cookie Preferences',                    'wp-cookie-shield' ) );
+$modal_intro  = WPCS_Settings::get_locale_string( 'modal_intro',  __( 'Manage your cookie preferences below:', 'wp-cookie-shield' ) );
+$modal_accept = WPCS_Settings::get_locale_string( 'modal_accept', __( 'Accept All',                            'wp-cookie-shield' ) );
+$modal_close  = WPCS_Settings::get_locale_string( 'modal_close',  __( 'Close',                                 'wp-cookie-shield' ) );
+$modal_save   = WPCS_Settings::get_locale_string( 'modal_save',   __( 'Save and Close',                        'wp-cookie-shield' ) );
+
 ob_start();
 ?>
 <div id="wpcs-modal-overlay" class="wpcs-overlay" aria-hidden="true">
@@ -25,8 +31,8 @@ ob_start();
 			&#10005;
 		</button>
 
-		<h2 id="wpcs-modal-title" class="wpcs-modal__title"><?php esc_html_e( 'Cookie Preferences', 'wp-cookie-shield' ); ?></h2>
-		<p class="wpcs-modal__intro"><?php esc_html_e( 'Manage your cookie preferences below:', 'wp-cookie-shield' ); ?></p>
+		<h2 id="wpcs-modal-title" class="wpcs-modal__title"><?php echo esc_html( $modal_title ); ?></h2>
+		<p class="wpcs-modal__intro"><?php echo esc_html( $modal_intro ); ?></p>
 
 		<div class="wpcs-accordion">
 			<?php foreach ( $categories as $key => $cat ) :
@@ -78,9 +84,9 @@ ob_start();
 		</div>
 
 		<div class="wpcs-modal__footer">
-			<button type="button" id="wpcs-modal-accept-all" class="wpcs-btn wpcs-btn--accept"><?php esc_html_e( 'Accept All', 'wp-cookie-shield' ); ?></button>
-			<button type="button" id="wpcs-modal-close-btn" class="wpcs-btn wpcs-btn--outline"><?php esc_html_e( 'Close', 'wp-cookie-shield' ); ?></button>
-			<button type="button" id="wpcs-modal-save" class="wpcs-btn wpcs-btn--save"><?php esc_html_e( 'Save and Close', 'wp-cookie-shield' ); ?></button>
+			<button type="button" id="wpcs-modal-accept-all" class="wpcs-btn wpcs-btn--accept"><?php echo esc_html( $modal_accept ); ?></button>
+			<button type="button" id="wpcs-modal-close-btn" class="wpcs-btn wpcs-btn--outline"><?php echo esc_html( $modal_close ); ?></button>
+			<button type="button" id="wpcs-modal-save" class="wpcs-btn wpcs-btn--save"><?php echo esc_html( $modal_save ); ?></button>
 		</div>
 	</div>
 </div>

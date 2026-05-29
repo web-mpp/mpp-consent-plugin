@@ -87,6 +87,33 @@ class WPCS_Settings {
 		return $settings[ $key ] ?? null;
 	}
 
+	/**
+	 * Get a locale-specific UI string, falling back to $fallback if not set.
+	 * locale_texts[$locale] is an array keyed by string name (banner_text,
+	 * btn_preferences, btn_reject, btn_accept, modal_title, modal_intro,
+	 * modal_accept, modal_close, modal_save).
+	 * Backwards-compat: old format stored a plain string for banner_text only.
+	 */
+	public static function get_locale_string( string $key, string $fallback = '' ): string {
+		$settings     = self::get();
+		$locale       = get_locale();
+		$locale_texts = (array) ( $settings['locale_texts'] ?? [] );
+		$locale_data  = $locale_texts[ $locale ] ?? null;
+
+		if ( is_array( $locale_data ) ) {
+			return ( isset( $locale_data[ $key ] ) && $locale_data[ $key ] !== '' )
+				? $locale_data[ $key ]
+				: $fallback;
+		}
+
+		// Backwards compat: plain string = banner_text only
+		if ( $key === 'banner_text' && is_string( $locale_data ) && $locale_data !== '' ) {
+			return $locale_data;
+		}
+
+		return $fallback;
+	}
+
 	public static function update( array $new_values ): bool {
 		$current = self::get();
 		$updated = array_merge( $current, $new_values );
