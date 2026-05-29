@@ -9,10 +9,12 @@ class WPCS_Frontend {
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_assets' ] );
 		add_action( 'wp_footer',          [ $this, 'output_banner' ] );
 		add_action( 'wp_footer',          [ $this, 'output_modal' ] );
+		add_action( 'wp_footer',          [ $this, 'output_floating_button' ] );
 
 		add_shortcode( 'wpcs_preferences',    [ $this, 'shortcode_preferences' ] );
 		add_shortcode( 'wpcs_cookie_table',   [ $this, 'shortcode_cookie_table' ] );
 		add_shortcode( 'wpcs_consent_status', [ $this, 'shortcode_consent_status' ] );
+		add_shortcode( 'wpcs_cookie_policy',  [ $this, 'shortcode_cookie_policy' ] );
 	}
 
 	public function enqueue_assets(): void {
@@ -35,19 +37,28 @@ class WPCS_Frontend {
 		$settings = WPCS_Settings::get();
 		$geo      = new WPCS_Geolocation();
 
+		$locale       = get_locale();
+		$locale_texts = (array) ( $settings['locale_texts'] ?? [] );
+		$banner_text  = $locale_texts[ $locale ] ?? $settings['banner_text'];
+
 		wp_localize_script( 'wp-cookie-shield', 'wpcSettings', [
-			'restUrl'        => rest_url( 'wp-cookie-shield/v1' ),
-			'nonce'          => wp_create_nonce( 'wpcs_consent' ),
-			'policyVersion'  => $settings['policy_version'],
-			'expiryDays'     => (int) $settings['consent_expiry_days'],
-			'showBanner'     => ! $consent->has_consent() && $geo->should_show_banner(),
+			'restUrl'           => rest_url( 'wp-cookie-shield/v1' ),
+			'nonce'             => wp_create_nonce( 'wpcs_consent' ),
+			'policyVersion'     => $settings['policy_version'],
+			'expiryDays'        => (int) $settings['consent_expiry_days'],
+			'showBanner'        => ! $consent->has_consent() && $geo->should_show_banner(),
 			'autoDenyMarketing' => $consent->should_auto_deny_marketing(),
-			'categories'     => array_keys( $settings['categories'] ),
-			'categoryLabels' => array_map( fn( $c ) => $c['label'], $settings['categories'] ),
-			'bannerText'     => $settings['banner_text'],
-			'showReject'     => (bool) $settings['show_reject_button'],
-			'showPreferences'=> (bool) $settings['show_preferences_button'],
+			'categories'        => array_keys( $settings['categories'] ),
+			'categoryLabels'    => array_map( fn( $c ) => $c['label'], $settings['categories'] ),
+			'bannerText'        => $banner_text,
+			'showReject'        => (bool) $settings['show_reject_button'],
+			'showPreferences'   => (bool) $settings['show_preferences_button'],
 		] );
+	}
+
+	public function output_floating_button(): void {
+		if ( ! WPCS_Settings::get( 'show_floating_button' ) ) return;
+		echo '<button type="button" class="wpcs-floating-btn wpcs-open-modal" aria-label="' . esc_attr__( 'Cookie Preferences', 'wp-cookie-shield' ) . '" title="' . esc_attr__( 'Cookie Preferences', 'wp-cookie-shield' ) . '">🍪</button>';
 	}
 
 	public function output_banner(): void {
@@ -104,6 +115,55 @@ class WPCS_Frontend {
 
 		$html .= '</tbody></table>';
 
+		return $html;
+	}
+
+	public function shortcode_cookie_policy( array $atts ): string {
+		$settings = WPCS_Settings::get();
+		$categories = $settings['categories'];
+
+		global $wpdb;
+		$all_cookies = $wpdb->get_results(
+			"SELECT * FROM {$wpdb->prefix}wpcs_cookies WHERE is_active = 1 ORDER BY category, cookie_name",
+			ARRAY_A
+		);
+
+		$by_cat = [];
+		foreach ( $all_cookies as $c ) {
+			$by_cat[ $c['category'] ][] = $c;
+		}
+
+		$html = '<div class="wpcs-cookie-policy">';
+
+		foreach ( $categories as $key => $cat ) {
+			$cookies = $by_cat[ $key ] ?? [];
+			$count   = count( $cookies );
+
+			$html .= '<h3>' . esc_html( $cat['label'] ) . '</h3>';
+			$html .= '<p>' . esc_html( $cat['description'] ) . '</p>';
+
+			if ( $count > 0 ) {
+				$html .= '<table class="wpcs-cookie-table"><thead><tr>';
+				$html .= '<th>' . esc_html__( 'Cookie', 'wp-cookie-shield' ) . '</th>';
+				$html .= '<th>' . esc_html__( 'Provider', 'wp-cookie-shield' ) . '</th>';
+				$html .= '<th>' . esc_html__( 'Purpose', 'wp-cookie-shield' ) . '</th>';
+				$html .= '<th>' . esc_html__( 'Duration', 'wp-cookie-shield' ) . '</th>';
+				$html .= '</tr></thead><tbody>';
+				foreach ( $cookies as $c ) {
+					$html .= '<tr>';
+					$html .= '<td><code>' . esc_html( $c['cookie_name'] ) . '</code></td>';
+					$html .= '<td>' . esc_html( $c['provider'] ) . '</td>';
+					$html .= '<td>' . esc_html( $c['purpose'] ) . '</td>';
+					$html .= '<td>' . esc_html( $c['duration'] ) . '</td>';
+					$html .= '</tr>';
+				}
+				$html .= '</tbody></table>';
+			} else {
+				$html .= '<p><em>' . esc_html__( 'No cookies declared in this category yet.', 'wp-cookie-shield' ) . '</em></p>';
+			}
+		}
+
+		$html .= '</div>';
 		return $html;
 	}
 

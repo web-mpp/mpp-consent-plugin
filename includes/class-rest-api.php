@@ -124,12 +124,20 @@ class WPCS_RestAPI {
 
 	public function trigger_scan( WP_REST_Request $request ): WP_REST_Response {
 		$scanner = new WPCS_CookieScanner();
-		$job_id  = uniqid( 'scan_', true );
+		$results = $scanner->scan();
 
-		// Schedule async via cron (fires on next page load)
-		wp_schedule_single_event( time(), 'wpcs_run_scan_job', [ $job_id ] );
+		global $wpdb;
+		$cookies = $wpdb->get_results(
+			"SELECT * FROM {$wpdb->prefix}wpcs_cookies ORDER BY category, cookie_name",
+			ARRAY_A
+		);
 
-		return new WP_REST_Response( [ 'job_id' => $job_id, 'status' => 'scheduled' ], 202 );
+		return new WP_REST_Response( [
+			'success'   => true,
+			'count'     => count( $cookies ),
+			'cookies'   => $cookies,
+			'last_scan' => human_time_diff( time() ) . ' ago',
+		], 200 );
 	}
 
 	public function run_scan_job( string $job_id ): void {

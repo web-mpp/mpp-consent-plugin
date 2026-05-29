@@ -40,9 +40,22 @@ class WPCS_Settings {
 			'geo_jurisdictions' => [ 'EU', 'CA', 'US-CA' ],
 
 			// Compliance
-			'dnt_respect'           => true,
-			'cookie_policy_page_id' => 0,
-			'privacy_policy_page_id'=> 0,
+			'dnt_respect'              => true,
+			'gpc_respect'              => true,
+			'cookie_policy_page_id'    => 0,
+			'privacy_policy_page_id'   => 0,
+
+			// Locale-specific banner texts (keyed by WP locale, e.g. 'fr_FR')
+			'locale_texts'             => [],
+
+			// Advanced
+			'show_floating_button'     => false,
+			'iframe_blocking_enabled'  => false,
+			'gcm_url_passthrough'      => false,
+			'gcm_ads_data_redaction'   => true,
+			'shared_consent'           => false,
+			'consent_logs_enabled'     => true,
+			'remove_data_on_uninstall' => false,
 
 			// Scanner
 			'last_scan_time'      => 0,

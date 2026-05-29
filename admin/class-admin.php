@@ -50,8 +50,9 @@ class WPCS_Admin {
 		);
 
 		wp_localize_script( 'wpcs-admin', 'wpcsAdmin', [
-			'nonce'   => wp_create_nonce( 'wpcs_admin_action' ),
-			'restUrl' => rest_url( 'wp-cookie-shield/v1' ),
+			'nonce'      => wp_create_nonce( 'wpcs_admin_action' ),
+			'restNonce'  => wp_create_nonce( 'wp_rest' ),
+			'restUrl'    => rest_url( 'wp-cookie-shield/v1' ),
 		] );
 	}
 
@@ -65,6 +66,8 @@ class WPCS_Admin {
 			'scanner'    => __( 'Scanner', 'wp-cookie-shield' ),
 			'gcm'        => __( 'Google Consent Mode', 'wp-cookie-shield' ),
 			'compliance' => __( 'Compliance', 'wp-cookie-shield' ),
+			'languages'  => __( 'Languages', 'wp-cookie-shield' ),
+			'advanced'   => __( 'Advanced', 'wp-cookie-shield' ),
 		];
 		?>
 		<div class="wrap wpcs-admin-wrap">

@@ -45,8 +45,10 @@ class WPCS_GCMHandler {
 			echo "  gtag('consent', 'default', " . json_encode( $defaults ) . ");\n";
 		}
 
-		echo "  gtag('set', 'ads_data_redaction', true);\n";
-		echo "  gtag('set', 'url_passthrough', false);\n";
+		$ads_redaction  = (bool) ( $settings['gcm_ads_data_redaction'] ?? true );
+		$url_passthrough = (bool) ( $settings['gcm_url_passthrough'] ?? false );
+		echo "  gtag('set', 'ads_data_redaction', " . ( $ads_redaction ? 'true' : 'false' ) . ");\n";
+		echo "  gtag('set', 'url_passthrough', " . ( $url_passthrough ? 'true' : 'false' ) . ");\n";
 		echo "</script>\n";
 	}
 

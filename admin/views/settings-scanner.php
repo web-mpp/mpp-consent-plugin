@@ -14,7 +14,7 @@ $cookies = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}wpcs_cookies ORDER 
 ?>
 
 <div class="wpcs-scanner-header">
-	<p>
+	<p id="wpcs-last-scan-text">
 		<?php
 		printf(
 			/* translators: %s: human-readable time */
@@ -32,8 +32,9 @@ $cookies = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}wpcs_cookies ORDER 
 	<span id="wpcs-scan-status" class="wpcs-scan-status"></span>
 </div>
 
+<div id="wpcs-cookies-wrap">
 <?php if ( $cookies ) : ?>
-<table class="widefat fixed striped">
+<table class="widefat fixed striped" id="wpcs-cookies-table">
 	<thead>
 		<tr>
 			<th><?php esc_html_e( 'Cookie Name', 'wp-cookie-shield' ); ?></th>
@@ -43,7 +44,7 @@ $cookies = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}wpcs_cookies ORDER 
 			<th><?php esc_html_e( 'Source', 'wp-cookie-shield' ); ?></th>
 		</tr>
 	</thead>
-	<tbody>
+	<tbody id="wpcs-cookies-tbody">
 		<?php foreach ( $cookies as $cookie ) : ?>
 		<tr>
 			<td><code><?php echo esc_html( $cookie['cookie_name'] ); ?></code></td>
@@ -56,5 +57,6 @@ $cookies = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}wpcs_cookies ORDER 
 	</tbody>
 </table>
 <?php else : ?>
-	<p><?php esc_html_e( 'No cookies found yet. Run a scan to detect cookies.', 'wp-cookie-shield' ); ?></p>
+	<p id="wpcs-cookies-empty"><?php esc_html_e( 'No cookies found yet. Run a scan to detect cookies.', 'wp-cookie-shield' ); ?></p>
 <?php endif; ?>
+</div>

@@ -60,6 +60,34 @@ $s = WPCS_Settings::get();
 				</label>
 			</td>
 		</tr>
+		<tr>
+			<th scope="row"><?php esc_html_e( 'Content Blocking', 'wp-cookie-shield' ); ?></th>
+			<td>
+				<label>
+					<input type="checkbox" name="wpcs_settings[iframe_blocking_enabled]" value="1" <?php checked( $s['iframe_blocking_enabled'] ?? false ); ?>>
+					<?php esc_html_e( 'Block third-party iframes (YouTube, Google Maps, etc.) until consent given', 'wp-cookie-shield' ); ?>
+				</label>
+			</td>
+		</tr>
+		<tr>
+			<th scope="row"><?php esc_html_e( 'Floating Settings Button', 'wp-cookie-shield' ); ?></th>
+			<td>
+				<label>
+					<input type="checkbox" name="wpcs_settings[show_floating_button]" value="1" <?php checked( $s['show_floating_button'] ?? false ); ?>>
+					<?php esc_html_e( 'Show a floating cookie button to re-open the preferences panel after the banner is dismissed', 'wp-cookie-shield' ); ?>
+				</label>
+			</td>
+		</tr>
+		<tr>
+			<th scope="row"><?php esc_html_e( 'Consent Logs', 'wp-cookie-shield' ); ?></th>
+			<td>
+				<label>
+					<input type="checkbox" name="wpcs_settings[consent_logs_enabled]" value="1" <?php checked( $s['consent_logs_enabled'] ?? true ); ?>>
+					<?php esc_html_e( 'Keep records of consent for all visitors', 'wp-cookie-shield' ); ?>
+				</label>
+				<p class="description"><?php esc_html_e( 'Consent records are stored in the database and can be viewed under Tools → Consent Log.', 'wp-cookie-shield' ); ?></p>
+			</td>
+		</tr>
 	</table>
 
 	<?php submit_button( __( 'Save Settings', 'wp-cookie-shield' ) ); ?>
