@@ -23,3 +23,7 @@ Thumbs.db
 
 # WP
 wp-config.php
+
+# Secrets
+.env
+*.env.local

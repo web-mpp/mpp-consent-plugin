@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:       WP Cookie Shield
- * Plugin URI:        https://mpp.com/wp-cookie-shield
+ * Plugin URI:        https://github.com/web-mpp/mpp-consent-plugin
  * Description:       GDPR/ePrivacy/CCPA/PIPEDA compliant cookie consent manager with Google Consent Mode v2.
  * Version:           1.0.0
  * Requires at least: 6.3
@@ -29,7 +29,7 @@ define( 'WPCS_TEXT_DOMAIN', 'wp-cookie-shield' );
  * The updater checks for new releases and surfaces them in WP Admin → Plugins.
  * Leave empty to disable auto-updates.
  */
-define( 'WPCS_GITHUB_REPO', '' );
+define( 'WPCS_GITHUB_REPO', 'web-mpp/mpp-consent-plugin' );
 
 // PSR-4-style autoloader
 spl_autoload_register( function ( string $class ): void {
