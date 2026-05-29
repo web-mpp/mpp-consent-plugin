@@ -18,11 +18,18 @@ declare(strict_types=1);
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'WPCS_VERSION',   '1.0.0' );
+define( 'WPCS_VERSION',     '1.0.0' );
 define( 'WPCS_PLUGIN_FILE', __FILE__ );
 define( 'WPCS_PLUGIN_DIR',  plugin_dir_path( __FILE__ ) );
 define( 'WPCS_PLUGIN_URL',  plugin_dir_url( __FILE__ ) );
 define( 'WPCS_TEXT_DOMAIN', 'wp-cookie-shield' );
+
+/**
+ * Set this to 'owner/repo-name' of your GitHub repository.
+ * The updater checks for new releases and surfaces them in WP Admin → Plugins.
+ * Leave empty to disable auto-updates.
+ */
+define( 'WPCS_GITHUB_REPO', '' );
 
 // PSR-4-style autoloader
 spl_autoload_register( function ( string $class ): void {
@@ -44,6 +51,7 @@ spl_autoload_register( function ( string $class ): void {
 		'WPCS_ScannerPage'    => 'admin/class-scanner-page.php',
 		'WPCS_ConsentLogPage' => 'admin/class-consent-log-page.php',
 		'WPCS_Frontend'       => 'public/class-frontend.php',
+		'WPCS_Updater'        => 'includes/class-updater.php',
 	];
 
 	if ( isset( $map[ $class ] ) ) {
@@ -58,4 +66,5 @@ register_deactivation_hook( __FILE__, [ 'WPCS_Installer', 'deactivate' ] );
 // Boot
 add_action( 'plugins_loaded', function (): void {
 	WPCS_Plugin::get_instance();
+	new WPCS_Updater();
 } );
