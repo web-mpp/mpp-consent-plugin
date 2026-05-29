@@ -47,43 +47,65 @@ class WPCS_SettingsAdmin {
 			return isset( $current[ $key ] ) ? (bool) $current[ $key ] : $default;
 		};
 
+		// ── Helper for non-boolean fields ───────────────────────────────────────
+		// Same principle as $bool(): if the field was not submitted (different tab),
+		// preserve the current saved value rather than falling back to a hardcoded default.
+		// Note: $current is read BEFORE update_option() runs, so it returns the real live value.
+		$val = static function ( string $key, mixed $default ) use ( $input, $current ): mixed {
+			return isset( $input[ $key ] ) ? $input[ $key ] : ( $current[ $key ] ?? $default );
+		};
+
 		// General
-		$output['banner_position']        = in_array( $input['banner_position'] ?? '', [ 'top', 'bottom' ], true ) ? $input['banner_position'] : 'top';
-		$output['banner_text']            = sanitize_textarea_field( $input['banner_text'] ?? $defaults['banner_text'] );
-		$output['policy_version']         = sanitize_text_field( $input['policy_version'] ?? '1.0' );
-		$output['consent_expiry_days']    = absint( $input['consent_expiry_days'] ?? 30 );
+		$raw_pos = $val( 'banner_position', $current['banner_position'] ?? 'top' );
+		$output['banner_position']        = in_array( $raw_pos, [ 'top', 'bottom' ], true ) ? $raw_pos : 'top';
+		$output['banner_text']            = isset( $input['banner_text'] )
+			? sanitize_textarea_field( $input['banner_text'] )
+			: ( $current['banner_text'] ?? $defaults['banner_text'] );
+		$output['policy_version']         = isset( $input['policy_version'] )
+			? sanitize_text_field( $input['policy_version'] )
+			: ( $current['policy_version'] ?? '1.0' );
+		$output['consent_expiry_days']    = isset( $input['consent_expiry_days'] )
+			? absint( $input['consent_expiry_days'] )
+			: ( $current['consent_expiry_days'] ?? 30 );
 		$output['prior_consent_required'] = $bool( 'prior_consent_required', $defaults['prior_consent_required'] );
 
-		// Appearance — read from $input (same reason as locale_texts: update_option fires sanitize
-		// before the write commits, so reading $current would return stale data).
-		$def_app   = $defaults['appearance'];
-		$input_app = isset( $input['appearance'] ) && is_array( $input['appearance'] ) ? $input['appearance'] : $def_app;
-		$output['appearance'] = [
-			'bg_primary'         => sanitize_hex_color( $input_app['bg_primary'] ?? '' )         ?: $def_app['bg_primary'],
-			'bg_secondary'       => sanitize_hex_color( $input_app['bg_secondary'] ?? '' )       ?: $def_app['bg_secondary'],
-			'border'             => sanitize_hex_color( $input_app['border'] ?? '' )             ?: $def_app['border'],
-			'text_primary'       => sanitize_hex_color( $input_app['text_primary'] ?? '' )       ?: $def_app['text_primary'],
-			'text_muted'         => sanitize_hex_color( $input_app['text_muted'] ?? '' )         ?: $def_app['text_muted'],
-			'btn_accept'         => sanitize_hex_color( $input_app['btn_accept'] ?? '' )         ?: $def_app['btn_accept'],
-			'btn_accept_hover'   => sanitize_hex_color( $input_app['btn_accept_hover'] ?? '' )   ?: $def_app['btn_accept_hover'],
-			'btn_outline_border' => sanitize_hex_color( $input_app['btn_outline_border'] ?? '' ) ?: $def_app['btn_outline_border'],
-			'toggle_active'      => sanitize_hex_color( $input_app['toggle_active'] ?? '' )      ?: $def_app['toggle_active'],
-			'border_radius'      => absint( $input_app['border_radius'] ?? $def_app['border_radius'] ),
-			'font_size'          => min( 32, max( 10, absint( $input_app['font_size'] ?? $def_app['font_size'] ) ) ),
-		];
-
-		// Categories — read from $input
-		$input_cats = isset( $input['categories'] ) && is_array( $input['categories'] ) ? $input['categories'] : [];
-		$output['categories'] = [];
-		foreach ( $defaults['categories'] as $key => $def_cat ) {
-			$in = $input_cats[ $key ] ?? [];
-			$output['categories'][ $key ] = [
-				'label'       => sanitize_text_field( $in['label'] ?? $def_cat['label'] ),
-				'description' => sanitize_textarea_field( $in['description'] ?? $def_cat['description'] ),
-				'enabled'     => $def_cat['enabled'],
-				'locked'      => $def_cat['locked'],
-				'expiry_days' => absint( $in['expiry_days'] ?? $def_cat['expiry_days'] ?? 30 ),
+		// Appearance — preserve current when tab not submitted; sanitize from $input when present
+		$def_app = $defaults['appearance'];
+		if ( isset( $input['appearance'] ) && is_array( $input['appearance'] ) ) {
+			$input_app = $input['appearance'];
+			$output['appearance'] = [
+				'bg_primary'         => sanitize_hex_color( $input_app['bg_primary'] ?? '' )         ?: $def_app['bg_primary'],
+				'bg_secondary'       => sanitize_hex_color( $input_app['bg_secondary'] ?? '' )       ?: $def_app['bg_secondary'],
+				'border'             => sanitize_hex_color( $input_app['border'] ?? '' )             ?: $def_app['border'],
+				'text_primary'       => sanitize_hex_color( $input_app['text_primary'] ?? '' )       ?: $def_app['text_primary'],
+				'text_muted'         => sanitize_hex_color( $input_app['text_muted'] ?? '' )         ?: $def_app['text_muted'],
+				'btn_accept'         => sanitize_hex_color( $input_app['btn_accept'] ?? '' )         ?: $def_app['btn_accept'],
+				'btn_accept_hover'   => sanitize_hex_color( $input_app['btn_accept_hover'] ?? '' )   ?: $def_app['btn_accept_hover'],
+				'btn_outline_border' => sanitize_hex_color( $input_app['btn_outline_border'] ?? '' ) ?: $def_app['btn_outline_border'],
+				'toggle_active'      => sanitize_hex_color( $input_app['toggle_active'] ?? '' )      ?: $def_app['toggle_active'],
+				'border_radius'      => absint( $input_app['border_radius'] ?? $def_app['border_radius'] ),
+				'font_size'          => min( 32, max( 10, absint( $input_app['font_size'] ?? $def_app['font_size'] ) ) ),
 			];
+		} else {
+			$output['appearance'] = $current['appearance'] ?? $def_app;
+		}
+
+		// Categories — preserve current when tab not submitted
+		if ( isset( $input['categories'] ) && is_array( $input['categories'] ) ) {
+			$input_cats = $input['categories'];
+			$output['categories'] = [];
+			foreach ( $defaults['categories'] as $key => $def_cat ) {
+				$in = $input_cats[ $key ] ?? [];
+				$output['categories'][ $key ] = [
+					'label'       => sanitize_text_field( $in['label'] ?? $def_cat['label'] ),
+					'description' => sanitize_textarea_field( $in['description'] ?? $def_cat['description'] ),
+					'enabled'     => $def_cat['enabled'],
+					'locked'      => $def_cat['locked'],
+					'expiry_days' => absint( $in['expiry_days'] ?? $def_cat['expiry_days'] ?? 30 ),
+				];
+			}
+		} else {
+			$output['categories'] = $current['categories'] ?? $defaults['categories'];
 		}
 
 		// GCM
@@ -115,9 +137,11 @@ class WPCS_SettingsAdmin {
 		$output['consent_logs_enabled']     = $bool( 'consent_logs_enabled',     $defaults['consent_logs_enabled'] );
 		$output['remove_data_on_uninstall'] = $bool( 'remove_data_on_uninstall', $defaults['remove_data_on_uninstall'] );
 
-		// Locale texts — read from $input (stale-current bug — see appearance comment above)
-		$output['locale_texts'] = [];
+		// Locale texts — preserve current when not submitted (different tab / dedicated handler).
+		// When called from handle_apply_language(), locale_texts IS in $input (already merged).
+		// When called from a settings form, locale_texts is NOT in $input → preserve current.
 		if ( isset( $input['locale_texts'] ) && is_array( $input['locale_texts'] ) ) {
+			$output['locale_texts'] = [];  // will be populated below
 			// Single-line fields
 			$text_fields = [
 				'btn_preferences', 'btn_reject', 'btn_accept',
@@ -149,11 +173,15 @@ class WPCS_SettingsAdmin {
 					$output['locale_texts'][ $loc ] = [ 'banner_text' => sanitize_textarea_field( $data ) ];
 				}
 			}
+		} else {
+			$output['locale_texts'] = $current['locale_texts'] ?? [];
 		}
 
 		// Preserve scanner timestamps (these are never in a form, always server-set)
 		$output['last_scan_time']      = $current['last_scan_time'];
-		$output['scan_frequency_days'] = absint( $input['scan_frequency_days'] ?? 30 );
+		$output['scan_frequency_days'] = isset( $input['scan_frequency_days'] )
+			? absint( $input['scan_frequency_days'] )
+			: ( $current['scan_frequency_days'] ?? 30 );
 
 		return $output;
 	}
