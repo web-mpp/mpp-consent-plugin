@@ -121,7 +121,7 @@ class WPCS_SettingsAdmin {
 			// Single-line fields
 			$text_fields = [
 				'btn_preferences', 'btn_reject', 'btn_accept',
-				'modal_title', 'modal_accept', 'modal_close', 'modal_save',
+				'modal_title', 'modal_policy_link', 'modal_accept', 'modal_close', 'modal_save',
 				'cat_essential_label', 'cat_statistics_label',
 				'cat_marketing_label', 'cat_preferences_label',
 			];
@@ -207,7 +207,7 @@ class WPCS_SettingsAdmin {
 		if ( $locale ) {
 			$text_fields = [
 				'btn_preferences', 'btn_reject', 'btn_accept',
-				'modal_title', 'modal_accept', 'modal_close', 'modal_save',
+				'modal_title', 'modal_policy_link', 'modal_accept', 'modal_close', 'modal_save',
 				'cat_essential_label', 'cat_statistics_label',
 				'cat_marketing_label', 'cat_preferences_label',
 			];

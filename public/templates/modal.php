@@ -11,11 +11,12 @@ $granted    = $consent->get_categories();
 $policy_page_id = (int) $settings['cookie_policy_page_id'];
 $policy_url     = $policy_page_id > 0 ? get_permalink( $policy_page_id ) : '';
 
-$modal_title  = WPCS_Settings::get_locale_string( 'modal_title',  __( 'Cookie Preferences',                    'wp-cookie-shield' ) );
-$modal_intro  = WPCS_Settings::get_locale_string( 'modal_intro',  __( 'Manage your cookie preferences below:', 'wp-cookie-shield' ) );
-$modal_accept = WPCS_Settings::get_locale_string( 'modal_accept', __( 'Accept All',                            'wp-cookie-shield' ) );
-$modal_close  = WPCS_Settings::get_locale_string( 'modal_close',  __( 'Close',                                 'wp-cookie-shield' ) );
-$modal_save   = WPCS_Settings::get_locale_string( 'modal_save',   __( 'Save and Close',                        'wp-cookie-shield' ) );
+$modal_title       = WPCS_Settings::get_locale_string( 'modal_title',       __( 'Cookie Preferences',                    'wp-cookie-shield' ) );
+$modal_intro       = WPCS_Settings::get_locale_string( 'modal_intro',       __( 'Manage your cookie preferences below:', 'wp-cookie-shield' ) );
+$modal_policy_link = WPCS_Settings::get_locale_string( 'modal_policy_link', __( 'Read our Cookie Policy',                'wp-cookie-shield' ) );
+$modal_accept      = WPCS_Settings::get_locale_string( 'modal_accept',      __( 'Accept All',                            'wp-cookie-shield' ) );
+$modal_close       = WPCS_Settings::get_locale_string( 'modal_close',       __( 'Close',                                 'wp-cookie-shield' ) );
+$modal_save        = WPCS_Settings::get_locale_string( 'modal_save',        __( 'Save and Close',                        'wp-cookie-shield' ) );
 
 ob_start();
 ?>
@@ -32,7 +33,12 @@ ob_start();
 		</button>
 
 		<h2 id="wpcs-modal-title" class="wpcs-modal__title"><?php echo esc_html( $modal_title ); ?></h2>
-		<p class="wpcs-modal__intro"><?php echo esc_html( $modal_intro ); ?></p>
+		<p class="wpcs-modal__intro">
+			<?php echo esc_html( $modal_intro ); ?>
+			<?php if ( $policy_url ) : ?>
+				<a href="<?php echo esc_url( $policy_url ); ?>" class="wpcs-modal__policy-link" target="_blank" rel="noopener"><?php echo esc_html( $modal_policy_link ); ?></a>
+			<?php endif; ?>
+		</p>
 
 		<div class="wpcs-accordion">
 			<?php foreach ( $categories as $key => $cat ) :
