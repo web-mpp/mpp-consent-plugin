@@ -3,9 +3,11 @@ declare(strict_types=1);
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-$settings = WPCS_Settings::get();
-$position = $settings['banner_position'] === 'bottom' ? 'wpcs-banner--bottom' : 'wpcs-banner--top';
-$text     = $settings['banner_text'];
+$settings     = WPCS_Settings::get();
+$position     = $settings['banner_position'] === 'bottom' ? 'wpcs-banner--bottom' : 'wpcs-banner--top';
+$locale       = get_locale();
+$locale_texts = (array) ( $settings['locale_texts'] ?? [] );
+$text         = $locale_texts[ $locale ] ?? $settings['banner_text'];
 
 $policy_page_id = (int) $settings['cookie_policy_page_id'];
 $policy_url     = $policy_page_id > 0 ? get_permalink( $policy_page_id ) : '';
