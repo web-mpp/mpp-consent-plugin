@@ -166,6 +166,8 @@ Or just run `bash bin/deploy-test.sh` which will `git pull` the version-bumped c
 | 1.0.0   | 2026-05-28 | Initial release — full GDPR/CCPA consent manager scaffold |
 | 1.0.1   | 2026-05-29 | Appearance tab, multilingual support, scanner page-scan, auto-updater |
 | 1.0.2   | 2026-05-29 | Fix: checkbox settings reset when saving from a different tab |
+| 1.0.3   | 2026-05-29 | Fix: update notification not appearing on WP Engine / cached hosts |
+| 1.0.4   | 2026-05-29 | Banner text centered; cookie policy link in preferences modal |
 
 *Add a row here each release.*
 
