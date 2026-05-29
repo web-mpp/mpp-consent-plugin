@@ -18,6 +18,7 @@ if ( isset( $_GET['reset'] ) ) {
 			<th scope="row"><?php esc_html_e( 'Shared Consent (Subdomains)', 'wp-cookie-shield' ); ?></th>
 			<td>
 				<label>
+					<input type="hidden"   name="wpcs_settings[shared_consent]" value="0">
 					<input type="checkbox" name="wpcs_settings[shared_consent]" value="1" <?php checked( $s['shared_consent'] ?? false ); ?>>
 					<?php esc_html_e( 'Share cookie preferences across all subdomains of this site', 'wp-cookie-shield' ); ?>
 				</label>
@@ -28,6 +29,7 @@ if ( isset( $_GET['reset'] ) ) {
 			<th scope="row"><?php esc_html_e( 'Remove All Data on Uninstall', 'wp-cookie-shield' ); ?></th>
 			<td>
 				<label>
+					<input type="hidden"   name="wpcs_settings[remove_data_on_uninstall]" value="0">
 					<input type="checkbox" name="wpcs_settings[remove_data_on_uninstall]" value="1" <?php checked( $s['remove_data_on_uninstall'] ?? false ); ?>>
 					<?php esc_html_e( 'Delete all plugin data (settings, consent logs, cookie declarations) when the plugin is uninstalled', 'wp-cookie-shield' ); ?>
 				</label>

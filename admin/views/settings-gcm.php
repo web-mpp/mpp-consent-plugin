@@ -15,6 +15,7 @@ $gcm = new WPCS_GCMHandler();
 			<th scope="row"><?php esc_html_e( 'Enable Google Consent Mode v2', 'wp-cookie-shield' ); ?></th>
 			<td>
 				<label>
+					<input type="hidden"   name="wpcs_settings[gcm_enabled]" value="0">
 					<input type="checkbox" name="wpcs_settings[gcm_enabled]" value="1" <?php checked( $s['gcm_enabled'] ); ?>>
 					<?php esc_html_e( 'Output GCM v2 default consent snippet in &lt;head&gt;', 'wp-cookie-shield' ); ?>
 				</label>
@@ -48,6 +49,7 @@ $gcm = new WPCS_GCMHandler();
 			<th scope="row"><?php esc_html_e( 'URL Passthrough', 'wp-cookie-shield' ); ?></th>
 			<td>
 				<label>
+					<input type="hidden"   name="wpcs_settings[gcm_url_passthrough]" value="0">
 					<input type="checkbox" name="wpcs_settings[gcm_url_passthrough]" value="1" <?php checked( $s['gcm_url_passthrough'] ?? false ); ?>>
 					<?php esc_html_e( 'Pass advertising identifiers (gclid, dclid) in URL parameters so conversion attribution works when ad cookies are denied', 'wp-cookie-shield' ); ?>
 				</label>
@@ -57,6 +59,7 @@ $gcm = new WPCS_GCMHandler();
 			<th scope="row"><?php esc_html_e( 'Ads Data Redaction', 'wp-cookie-shield' ); ?></th>
 			<td>
 				<label>
+					<input type="hidden"   name="wpcs_settings[gcm_ads_data_redaction]" value="0">
 					<input type="checkbox" name="wpcs_settings[gcm_ads_data_redaction]" value="1" <?php checked( $s['gcm_ads_data_redaction'] ?? true ); ?>>
 					<?php esc_html_e( 'When ad storage is denied, route Google ad measurement through cookieless domains and strip ad-click identifiers from network requests', 'wp-cookie-shield' ); ?>
 				</label>

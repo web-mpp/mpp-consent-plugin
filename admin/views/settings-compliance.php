@@ -18,6 +18,7 @@ if ( isset( $_GET['generated'] ) ) {
 			<th scope="row"><?php esc_html_e( 'Honour Do Not Track', 'wp-cookie-shield' ); ?></th>
 			<td>
 				<label>
+					<input type="hidden"   name="wpcs_settings[dnt_respect]" value="0">
 					<input type="checkbox" name="wpcs_settings[dnt_respect]" value="1" <?php checked( $s['dnt_respect'] ); ?>>
 					<?php esc_html_e( 'Auto-deny Statistics &amp; Marketing when DNT header is set', 'wp-cookie-shield' ); ?>
 				</label>
@@ -27,6 +28,7 @@ if ( isset( $_GET['generated'] ) ) {
 			<th scope="row"><?php esc_html_e( 'Global Privacy Control', 'wp-cookie-shield' ); ?></th>
 			<td>
 				<label>
+					<input type="hidden"   name="wpcs_settings[gpc_respect]" value="0">
 					<input type="checkbox" name="wpcs_settings[gpc_respect]" value="1" <?php checked( $s['gpc_respect'] ?? true ); ?>>
 					<?php esc_html_e( 'Automatically respect Global Privacy Control (GPC) signals from user browsers — auto-deny Marketing when Sec-GPC: 1 header is present', 'wp-cookie-shield' ); ?>
 				</label>
@@ -36,6 +38,7 @@ if ( isset( $_GET['generated'] ) ) {
 			<th scope="row"><?php esc_html_e( 'Geolocation', 'wp-cookie-shield' ); ?></th>
 			<td>
 				<label>
+					<input type="hidden"   name="wpcs_settings[geo_enabled]" value="0">
 					<input type="checkbox" name="wpcs_settings[geo_enabled]" value="1" <?php checked( $s['geo_enabled'] ); ?>>
 					<?php esc_html_e( 'Only show banner to visitors in regulated jurisdictions (EU, UK, Canada, California)', 'wp-cookie-shield' ); ?>
 				</label>

@@ -43,6 +43,7 @@ $s = WPCS_Settings::get();
 			<th scope="row"><?php esc_html_e( 'Script Blocking', 'wp-cookie-shield' ); ?></th>
 			<td>
 				<label>
+					<input type="hidden"   name="wpcs_settings[script_blocking_enabled]" value="0">
 					<input type="checkbox" name="wpcs_settings[script_blocking_enabled]" value="1" <?php checked( $s['script_blocking_enabled'] ); ?>>
 					<?php esc_html_e( 'Block non-essential scripts until consent given', 'wp-cookie-shield' ); ?>
 				</label>
@@ -52,6 +53,7 @@ $s = WPCS_Settings::get();
 			<th scope="row"><?php esc_html_e( 'Content Blocking', 'wp-cookie-shield' ); ?></th>
 			<td>
 				<label>
+					<input type="hidden"   name="wpcs_settings[iframe_blocking_enabled]" value="0">
 					<input type="checkbox" name="wpcs_settings[iframe_blocking_enabled]" value="1" <?php checked( $s['iframe_blocking_enabled'] ?? false ); ?>>
 					<?php esc_html_e( 'Block third-party iframes (YouTube, Google Maps, etc.) until consent given', 'wp-cookie-shield' ); ?>
 				</label>
@@ -61,6 +63,7 @@ $s = WPCS_Settings::get();
 			<th scope="row"><?php esc_html_e( 'Floating Settings Button', 'wp-cookie-shield' ); ?></th>
 			<td>
 				<label>
+					<input type="hidden"   name="wpcs_settings[show_floating_button]" value="0">
 					<input type="checkbox" name="wpcs_settings[show_floating_button]" value="1" <?php checked( $s['show_floating_button'] ?? false ); ?>>
 					<?php esc_html_e( 'Show a floating cookie button to re-open the preferences panel after the banner is dismissed', 'wp-cookie-shield' ); ?>
 				</label>
@@ -70,6 +73,7 @@ $s = WPCS_Settings::get();
 			<th scope="row"><?php esc_html_e( 'Consent Logs', 'wp-cookie-shield' ); ?></th>
 			<td>
 				<label>
+					<input type="hidden"   name="wpcs_settings[consent_logs_enabled]" value="0">
 					<input type="checkbox" name="wpcs_settings[consent_logs_enabled]" value="1" <?php checked( $s['consent_logs_enabled'] ?? true ); ?>>
 					<?php esc_html_e( 'Keep records of consent for all visitors', 'wp-cookie-shield' ); ?>
 				</label>

@@ -36,14 +36,23 @@ class WPCS_SettingsAdmin {
 
 	public function sanitize( array $input ): array {
 		$defaults = WPCS_Settings::get_defaults();
+		$current  = WPCS_Settings::get(); // used as fallback for fields absent from $input (cross-tab saves)
 		$output   = [];
 
+		// Helper: preserve current boolean when the field wasn't submitted at all (different tab)
+		// Hidden inputs in each tab's form ensure unchecking sends "0", so isset() only misses
+		// fields from OTHER tabs — those should be preserved, not reset to false.
+		$bool = static function ( string $key, bool $default ) use ( $input, $current ): bool {
+			if ( isset( $input[ $key ] ) ) return (bool) $input[ $key ];
+			return isset( $current[ $key ] ) ? (bool) $current[ $key ] : $default;
+		};
+
 		// General
-		$output['banner_position']       = in_array( $input['banner_position'] ?? '', [ 'top', 'bottom' ], true ) ? $input['banner_position'] : 'top';
-		$output['banner_text']           = sanitize_textarea_field( $input['banner_text'] ?? $defaults['banner_text'] );
-		$output['policy_version']        = sanitize_text_field( $input['policy_version'] ?? '1.0' );
-		$output['consent_expiry_days']   = absint( $input['consent_expiry_days'] ?? 30 );
-		$output['prior_consent_required'] = ! empty( $input['prior_consent_required'] );
+		$output['banner_position']        = in_array( $input['banner_position'] ?? '', [ 'top', 'bottom' ], true ) ? $input['banner_position'] : 'top';
+		$output['banner_text']            = sanitize_textarea_field( $input['banner_text'] ?? $defaults['banner_text'] );
+		$output['policy_version']         = sanitize_text_field( $input['policy_version'] ?? '1.0' );
+		$output['consent_expiry_days']    = absint( $input['consent_expiry_days'] ?? 30 );
+		$output['prior_consent_required'] = $bool( 'prior_consent_required', $defaults['prior_consent_required'] );
 
 		// Appearance — read from $input (same reason as locale_texts: update_option fires sanitize
 		// before the write commits, so reading $current would return stale data).
@@ -78,33 +87,33 @@ class WPCS_SettingsAdmin {
 		}
 
 		// GCM
-		$output['gcm_enabled']            = ! empty( $input['gcm_enabled'] );
-		$output['gcm_default_analytics']  = in_array( $input['gcm_default_analytics'] ?? '', [ 'denied', 'granted' ], true ) ? $input['gcm_default_analytics'] : 'denied';
-		$output['gcm_default_ads']        = in_array( $input['gcm_default_ads'] ?? '', [ 'denied', 'granted' ], true ) ? $input['gcm_default_ads'] : 'denied';
-		$output['gcm_region']             = array_map( 'sanitize_key', (array) ( $input['gcm_region'] ?? [] ) );
-		$output['gcm_wait_for_update_ms'] = absint( $input['gcm_wait_for_update_ms'] ?? 500 );
-		$output['gcm_url_passthrough']    = ! empty( $input['gcm_url_passthrough'] );
-		$output['gcm_ads_data_redaction'] = ! empty( $input['gcm_ads_data_redaction'] );
+		$output['gcm_enabled']            = $bool( 'gcm_enabled',            $defaults['gcm_enabled'] );
+		$output['gcm_default_analytics']  = in_array( $input['gcm_default_analytics'] ?? '', [ 'denied', 'granted' ], true ) ? $input['gcm_default_analytics'] : ( $current['gcm_default_analytics'] ?? 'denied' );
+		$output['gcm_default_ads']        = in_array( $input['gcm_default_ads'] ?? '', [ 'denied', 'granted' ], true ) ? $input['gcm_default_ads'] : ( $current['gcm_default_ads'] ?? 'denied' );
+		$output['gcm_region']             = isset( $input['gcm_region'] ) ? array_map( 'sanitize_key', (array) $input['gcm_region'] ) : ( $current['gcm_region'] ?? [] );
+		$output['gcm_wait_for_update_ms'] = isset( $input['gcm_wait_for_update_ms'] ) ? absint( $input['gcm_wait_for_update_ms'] ) : ( $current['gcm_wait_for_update_ms'] ?? 500 );
+		$output['gcm_url_passthrough']    = $bool( 'gcm_url_passthrough',    $defaults['gcm_url_passthrough'] );
+		$output['gcm_ads_data_redaction'] = $bool( 'gcm_ads_data_redaction', $defaults['gcm_ads_data_redaction'] );
 
 		// Script / content blocking
-		$output['script_blocking_enabled'] = ! empty( $input['script_blocking_enabled'] );
-		$output['iframe_blocking_enabled'] = ! empty( $input['iframe_blocking_enabled'] );
+		$output['script_blocking_enabled'] = $bool( 'script_blocking_enabled', $defaults['script_blocking_enabled'] );
+		$output['iframe_blocking_enabled'] = $bool( 'iframe_blocking_enabled', $defaults['iframe_blocking_enabled'] );
 
 		// Geolocation
-		$output['geo_enabled']       = ! empty( $input['geo_enabled'] );
-		$output['geo_jurisdictions'] = array_map( 'sanitize_key', (array) ( $input['geo_jurisdictions'] ?? [] ) );
+		$output['geo_enabled']       = $bool( 'geo_enabled', $defaults['geo_enabled'] );
+		$output['geo_jurisdictions']  = isset( $input['geo_jurisdictions'] ) ? array_map( 'sanitize_key', (array) $input['geo_jurisdictions'] ) : ( $current['geo_jurisdictions'] ?? [] );
 
 		// Compliance
-		$output['dnt_respect']            = ! empty( $input['dnt_respect'] );
-		$output['gpc_respect']            = ! empty( $input['gpc_respect'] );
-		$output['cookie_policy_page_id']  = absint( $input['cookie_policy_page_id'] ?? 0 );
-		$output['privacy_policy_page_id'] = absint( $input['privacy_policy_page_id'] ?? 0 );
+		$output['dnt_respect']            = $bool( 'dnt_respect', $defaults['dnt_respect'] );
+		$output['gpc_respect']            = $bool( 'gpc_respect', $defaults['gpc_respect'] );
+		$output['cookie_policy_page_id']  = isset( $input['cookie_policy_page_id'] )  ? absint( $input['cookie_policy_page_id'] )  : ( $current['cookie_policy_page_id']  ?? 0 );
+		$output['privacy_policy_page_id'] = isset( $input['privacy_policy_page_id'] ) ? absint( $input['privacy_policy_page_id'] ) : ( $current['privacy_policy_page_id'] ?? 0 );
 
 		// Advanced
-		$output['show_floating_button']     = ! empty( $input['show_floating_button'] );
-		$output['shared_consent']           = ! empty( $input['shared_consent'] );
-		$output['consent_logs_enabled']     = ! empty( $input['consent_logs_enabled'] );
-		$output['remove_data_on_uninstall'] = ! empty( $input['remove_data_on_uninstall'] );
+		$output['show_floating_button']     = $bool( 'show_floating_button',     $defaults['show_floating_button'] );
+		$output['shared_consent']           = $bool( 'shared_consent',           $defaults['shared_consent'] );
+		$output['consent_logs_enabled']     = $bool( 'consent_logs_enabled',     $defaults['consent_logs_enabled'] );
+		$output['remove_data_on_uninstall'] = $bool( 'remove_data_on_uninstall', $defaults['remove_data_on_uninstall'] );
 
 		// Locale texts — read from $input (stale-current bug — see appearance comment above)
 		$output['locale_texts'] = [];
@@ -143,7 +152,6 @@ class WPCS_SettingsAdmin {
 		}
 
 		// Preserve scanner timestamps (these are never in a form, always server-set)
-		$current = WPCS_Settings::get();
 		$output['last_scan_time']      = $current['last_scan_time'];
 		$output['scan_frequency_days'] = absint( $input['scan_frequency_days'] ?? 30 );
 
