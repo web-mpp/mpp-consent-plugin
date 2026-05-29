@@ -42,8 +42,9 @@ class WPCS_Updater {
 		}
 	}
 
-	public function check_for_update( object $transient ): object {
-		if ( empty( $transient->checked ) ) {
+	public function check_for_update( mixed $transient ): mixed {
+		// WordPress passes false when the transient doesn't exist yet
+		if ( ! is_object( $transient ) || empty( $transient->checked ) ) {
 			return $transient;
 		}
 
@@ -62,7 +63,6 @@ class WPCS_Updater {
 				'url'         => $release['html_url'],
 				'package'     => $this->get_download_url( $release ),
 			];
-			// Remove from no_update in case it was previously cached there
 			unset( $transient->no_update[ $this->plugin_file ] );
 		} else {
 			$transient->no_update[ $this->plugin_file ] = (object) [
@@ -143,7 +143,11 @@ class WPCS_Updater {
 		];
 	}
 
-	public function fix_folder_name( bool $response, array $hook_extra, array $result ): bool {
+	public function fix_folder_name( mixed $response, array $hook_extra, array $result ): mixed {
+		// Only act on our own plugin; pass through errors and other plugins untouched
+		if ( is_wp_error( $response ) ) {
+			return $response;
+		}
 		if ( empty( $hook_extra['plugin'] ) || $hook_extra['plugin'] !== $this->plugin_file ) {
 			return $response;
 		}
@@ -151,9 +155,8 @@ class WPCS_Updater {
 		global $wp_filesystem;
 		$plugin_folder = WP_PLUGIN_DIR . '/' . $this->plugin_slug;
 
-		if ( $result['destination'] !== $plugin_folder ) {
+		if ( ! empty( $result['destination'] ) && $result['destination'] !== $plugin_folder ) {
 			$wp_filesystem->move( $result['destination'], $plugin_folder );
-			$result['destination'] = $plugin_folder;
 		}
 
 		return $response;
