@@ -61,13 +61,14 @@ class WPCS_Admin {
 
 		$active_tab = sanitize_key( $_GET['tab'] ?? 'general' );
 		$tabs = [
-			'general'    => __( 'General', 'wp-cookie-shield' ),
-			'categories' => __( 'Categories', 'wp-cookie-shield' ),
-			'scanner'    => __( 'Scanner', 'wp-cookie-shield' ),
+			'general'    => __( 'General',            'wp-cookie-shield' ),
+			'appearance' => __( 'Appearance',          'wp-cookie-shield' ),
+			'categories' => __( 'Categories',          'wp-cookie-shield' ),
+			'scanner'    => __( 'Scanner',             'wp-cookie-shield' ),
 			'gcm'        => __( 'Google Consent Mode', 'wp-cookie-shield' ),
-			'compliance' => __( 'Compliance', 'wp-cookie-shield' ),
-			'languages'  => __( 'Languages', 'wp-cookie-shield' ),
-			'advanced'   => __( 'Advanced', 'wp-cookie-shield' ),
+			'compliance' => __( 'Compliance',          'wp-cookie-shield' ),
+			'languages'  => __( 'Languages',           'wp-cookie-shield' ),
+			'advanced'   => __( 'Advanced',            'wp-cookie-shield' ),
 		];
 		?>
 		<div class="wrap wpcs-admin-wrap">

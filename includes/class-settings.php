@@ -8,20 +8,33 @@ class WPCS_Settings {
 	public static function get_defaults(): array {
 		return [
 			// General
-			'banner_position'         => 'top',
-			'banner_text'             => 'We use cookies to improve your experience on our site. By using our site, you consent to cookies.',
-			'show_reject_button'      => true,
-			'show_preferences_button' => true,
-			'policy_version'          => '1.0',
-			'consent_expiry_days'     => 365,
-			'prior_consent_required'  => true,
+			'banner_position'        => 'top',
+			'banner_text'            => 'We use cookies to improve your experience on our site. By using our site, you consent to cookies.',
+			'policy_version'         => '1.0',
+			'consent_expiry_days'    => 30,
+			'prior_consent_required' => true,
+
+			// Appearance
+			'appearance' => [
+				'bg_primary'         => '#0a1628',
+				'bg_secondary'       => '#0d1f3c',
+				'border'             => '#1e3254',
+				'text_primary'       => '#ffffff',
+				'text_muted'         => '#a0aec0',
+				'btn_accept'         => '#e53e3e',
+				'btn_accept_hover'   => '#c53030',
+				'btn_outline_border' => '#4a5568',
+				'toggle_active'      => '#3182ce',
+				'border_radius'      => 4,
+				'font_size'          => 14,
+			],
 
 			// Categories
 			'categories' => [
-				'essential'   => [ 'label' => 'Essential',   'description' => 'Essential cookies are required for the website to function and cannot be disabled.', 'enabled' => true,  'locked' => true ],
-				'statistics'  => [ 'label' => 'Statistics',  'description' => 'Statistical cookies help us understand how visitors interact with our website by collecting and reporting information anonymously.', 'enabled' => false, 'locked' => false ],
-				'marketing'   => [ 'label' => 'Marketing',   'description' => 'Marketing cookies are used to track visitors across websites to display relevant advertisements.', 'enabled' => false, 'locked' => false ],
-				'preferences' => [ 'label' => 'Preferences', 'description' => 'Preference cookies allow the website to remember information that changes the way the website behaves or looks, like your preferred language.', 'enabled' => false, 'locked' => false ],
+				'essential'   => [ 'label' => 'Essential',   'description' => 'Essential cookies are required for the website to function and cannot be disabled.', 'enabled' => true,  'locked' => true,  'expiry_days' => 365 ],
+				'statistics'  => [ 'label' => 'Statistics',  'description' => 'Statistical cookies help us understand how visitors interact with our website by collecting and reporting information anonymously.', 'enabled' => false, 'locked' => false, 'expiry_days' => 30 ],
+				'marketing'   => [ 'label' => 'Marketing',   'description' => 'Marketing cookies are used to track visitors across websites to display relevant advertisements.', 'enabled' => false, 'locked' => false, 'expiry_days' => 30 ],
+				'preferences' => [ 'label' => 'Preferences', 'description' => 'Preference cookies allow the website to remember information that changes the way the website behaves or looks, like your preferred language.', 'enabled' => false, 'locked' => false, 'expiry_days' => 30 ],
 			],
 
 			// Google Consent Mode

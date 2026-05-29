@@ -38,25 +38,63 @@ class WPCS_SettingsAdmin {
 		$defaults = WPCS_Settings::get_defaults();
 		$output   = [];
 
-		$output['banner_position']         = in_array( $input['banner_position'] ?? '', [ 'top', 'bottom' ], true ) ? $input['banner_position'] : 'top';
-		$output['banner_text']             = sanitize_textarea_field( $input['banner_text'] ?? $defaults['banner_text'] );
-		$output['show_reject_button']      = ! empty( $input['show_reject_button'] );
-		$output['show_preferences_button'] = ! empty( $input['show_preferences_button'] );
-		$output['policy_version']          = sanitize_text_field( $input['policy_version'] ?? '1.0' );
-		$output['consent_expiry_days']     = absint( $input['consent_expiry_days'] ?? 365 );
-		$output['prior_consent_required']  = ! empty( $input['prior_consent_required'] );
+		// General
+		$output['banner_position']       = in_array( $input['banner_position'] ?? '', [ 'top', 'bottom' ], true ) ? $input['banner_position'] : 'top';
+		$output['banner_text']           = sanitize_textarea_field( $input['banner_text'] ?? $defaults['banner_text'] );
+		$output['policy_version']        = sanitize_text_field( $input['policy_version'] ?? '1.0' );
+		$output['consent_expiry_days']   = absint( $input['consent_expiry_days'] ?? 30 );
+		$output['prior_consent_required'] = ! empty( $input['prior_consent_required'] );
 
+		// Appearance — read from $input (same reason as locale_texts: update_option fires sanitize
+		// before the write commits, so reading $current would return stale data).
+		$def_app   = $defaults['appearance'];
+		$input_app = isset( $input['appearance'] ) && is_array( $input['appearance'] ) ? $input['appearance'] : $def_app;
+		$output['appearance'] = [
+			'bg_primary'         => sanitize_hex_color( $input_app['bg_primary'] ?? '' )         ?: $def_app['bg_primary'],
+			'bg_secondary'       => sanitize_hex_color( $input_app['bg_secondary'] ?? '' )       ?: $def_app['bg_secondary'],
+			'border'             => sanitize_hex_color( $input_app['border'] ?? '' )             ?: $def_app['border'],
+			'text_primary'       => sanitize_hex_color( $input_app['text_primary'] ?? '' )       ?: $def_app['text_primary'],
+			'text_muted'         => sanitize_hex_color( $input_app['text_muted'] ?? '' )         ?: $def_app['text_muted'],
+			'btn_accept'         => sanitize_hex_color( $input_app['btn_accept'] ?? '' )         ?: $def_app['btn_accept'],
+			'btn_accept_hover'   => sanitize_hex_color( $input_app['btn_accept_hover'] ?? '' )   ?: $def_app['btn_accept_hover'],
+			'btn_outline_border' => sanitize_hex_color( $input_app['btn_outline_border'] ?? '' ) ?: $def_app['btn_outline_border'],
+			'toggle_active'      => sanitize_hex_color( $input_app['toggle_active'] ?? '' )      ?: $def_app['toggle_active'],
+			'border_radius'      => absint( $input_app['border_radius'] ?? $def_app['border_radius'] ),
+			'font_size'          => min( 32, max( 10, absint( $input_app['font_size'] ?? $def_app['font_size'] ) ) ),
+		];
+
+		// Categories — read from $input
+		$input_cats = isset( $input['categories'] ) && is_array( $input['categories'] ) ? $input['categories'] : [];
+		$output['categories'] = [];
+		foreach ( $defaults['categories'] as $key => $def_cat ) {
+			$in = $input_cats[ $key ] ?? [];
+			$output['categories'][ $key ] = [
+				'label'       => sanitize_text_field( $in['label'] ?? $def_cat['label'] ),
+				'description' => sanitize_textarea_field( $in['description'] ?? $def_cat['description'] ),
+				'enabled'     => $def_cat['enabled'],
+				'locked'      => $def_cat['locked'],
+				'expiry_days' => absint( $in['expiry_days'] ?? $def_cat['expiry_days'] ?? 30 ),
+			];
+		}
+
+		// GCM
 		$output['gcm_enabled']            = ! empty( $input['gcm_enabled'] );
 		$output['gcm_default_analytics']  = in_array( $input['gcm_default_analytics'] ?? '', [ 'denied', 'granted' ], true ) ? $input['gcm_default_analytics'] : 'denied';
 		$output['gcm_default_ads']        = in_array( $input['gcm_default_ads'] ?? '', [ 'denied', 'granted' ], true ) ? $input['gcm_default_ads'] : 'denied';
 		$output['gcm_region']             = array_map( 'sanitize_key', (array) ( $input['gcm_region'] ?? [] ) );
 		$output['gcm_wait_for_update_ms'] = absint( $input['gcm_wait_for_update_ms'] ?? 500 );
+		$output['gcm_url_passthrough']    = ! empty( $input['gcm_url_passthrough'] );
+		$output['gcm_ads_data_redaction'] = ! empty( $input['gcm_ads_data_redaction'] );
 
+		// Script / content blocking
 		$output['script_blocking_enabled'] = ! empty( $input['script_blocking_enabled'] );
+		$output['iframe_blocking_enabled'] = ! empty( $input['iframe_blocking_enabled'] );
 
+		// Geolocation
 		$output['geo_enabled']       = ! empty( $input['geo_enabled'] );
 		$output['geo_jurisdictions'] = array_map( 'sanitize_key', (array) ( $input['geo_jurisdictions'] ?? [] ) );
 
+		// Compliance
 		$output['dnt_respect']            = ! empty( $input['dnt_respect'] );
 		$output['gpc_respect']            = ! empty( $input['gpc_respect'] );
 		$output['cookie_policy_page_id']  = absint( $input['cookie_policy_page_id'] ?? 0 );
@@ -64,16 +102,11 @@ class WPCS_SettingsAdmin {
 
 		// Advanced
 		$output['show_floating_button']     = ! empty( $input['show_floating_button'] );
-		$output['iframe_blocking_enabled']  = ! empty( $input['iframe_blocking_enabled'] );
-		$output['gcm_url_passthrough']      = ! empty( $input['gcm_url_passthrough'] );
-		$output['gcm_ads_data_redaction']   = ! empty( $input['gcm_ads_data_redaction'] );
 		$output['shared_consent']           = ! empty( $input['shared_consent'] );
 		$output['consent_logs_enabled']     = ! empty( $input['consent_logs_enabled'] );
 		$output['remove_data_on_uninstall'] = ! empty( $input['remove_data_on_uninstall'] );
 
-		// Locale texts — read from $input which is already merged with current by WPCS_Settings::update().
-		// Do NOT read from $current here: update_option() triggers this callback before the write
-		// commits, so get_option() still returns the old value and would discard the new locale_texts.
+		// Locale texts — read from $input (stale-current bug — see appearance comment above)
 		$output['locale_texts'] = [];
 		if ( isset( $input['locale_texts'] ) && is_array( $input['locale_texts'] ) ) {
 			foreach ( $input['locale_texts'] as $loc => $text ) {
@@ -83,7 +116,7 @@ class WPCS_SettingsAdmin {
 			}
 		}
 
-		// Preserve scanner timestamps
+		// Preserve scanner timestamps (these are never in a form, always server-set)
 		$current = WPCS_Settings::get();
 		$output['last_scan_time']      = $current['last_scan_time'];
 		$output['scan_frequency_days'] = absint( $input['scan_frequency_days'] ?? 30 );

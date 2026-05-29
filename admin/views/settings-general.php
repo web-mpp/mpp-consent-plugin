@@ -26,19 +26,6 @@ $s = WPCS_Settings::get();
 			</td>
 		</tr>
 		<tr>
-			<th scope="row"><?php esc_html_e( 'Buttons', 'wp-cookie-shield' ); ?></th>
-			<td>
-				<label>
-					<input type="checkbox" name="wpcs_settings[show_reject_button]" value="1" <?php checked( $s['show_reject_button'] ); ?>>
-					<?php esc_html_e( 'Show Reject button', 'wp-cookie-shield' ); ?>
-				</label><br>
-				<label>
-					<input type="checkbox" name="wpcs_settings[show_preferences_button]" value="1" <?php checked( $s['show_preferences_button'] ); ?>>
-					<?php esc_html_e( 'Show Preferences button', 'wp-cookie-shield' ); ?>
-				</label>
-			</td>
-		</tr>
-		<tr>
 			<th scope="row"><?php esc_html_e( 'Policy Version', 'wp-cookie-shield' ); ?></th>
 			<td>
 				<input type="text" name="wpcs_settings[policy_version]" value="<?php echo esc_attr( $s['policy_version'] ); ?>" class="small-text">
@@ -46,9 +33,10 @@ $s = WPCS_Settings::get();
 			</td>
 		</tr>
 		<tr>
-			<th scope="row"><?php esc_html_e( 'Consent Expiry (days)', 'wp-cookie-shield' ); ?></th>
+			<th scope="row"><?php esc_html_e( 'Default Consent Expiry (days)', 'wp-cookie-shield' ); ?></th>
 			<td>
 				<input type="number" name="wpcs_settings[consent_expiry_days]" value="<?php echo esc_attr( $s['consent_expiry_days'] ); ?>" class="small-text" min="1" max="730">
+				<p class="description"><?php esc_html_e( 'Fallback used when a category has no expiry set. Per-category expiry can be set in the Categories tab.', 'wp-cookie-shield' ); ?></p>
 			</td>
 		</tr>
 		<tr>

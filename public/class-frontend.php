@@ -7,6 +7,7 @@ class WPCS_Frontend {
 
 	public function __construct() {
 		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_assets' ] );
+		add_action( 'wp_head',            [ $this, 'output_appearance_css' ], 5 );
 		add_action( 'wp_footer',          [ $this, 'output_banner' ] );
 		add_action( 'wp_footer',          [ $this, 'output_modal' ] );
 		add_action( 'wp_footer',          [ $this, 'output_floating_button' ] );
@@ -41,19 +42,61 @@ class WPCS_Frontend {
 		$locale_texts = (array) ( $settings['locale_texts'] ?? [] );
 		$banner_text  = $locale_texts[ $locale ] ?? $settings['banner_text'];
 
+		// Consent expiry = minimum expiry across all opt-in (non-locked) categories, fallback to global
+		$expiry_days = (int) ( $settings['consent_expiry_days'] ?? 30 );
+		foreach ( $settings['categories'] as $cat ) {
+			if ( empty( $cat['locked'] ) && isset( $cat['expiry_days'] ) ) {
+				$expiry_days = min( $expiry_days, (int) $cat['expiry_days'] );
+			}
+		}
+
 		wp_localize_script( 'wp-cookie-shield', 'wpcSettings', [
 			'restUrl'           => rest_url( 'wp-cookie-shield/v1' ),
 			'nonce'             => wp_create_nonce( 'wpcs_consent' ),
 			'policyVersion'     => $settings['policy_version'],
-			'expiryDays'        => (int) $settings['consent_expiry_days'],
+			'expiryDays'        => $expiry_days,
 			'showBanner'        => ! $consent->has_consent() && $geo->should_show_banner(),
 			'autoDenyMarketing' => $consent->should_auto_deny_marketing(),
 			'categories'        => array_keys( $settings['categories'] ),
 			'categoryLabels'    => array_map( fn( $c ) => $c['label'], $settings['categories'] ),
 			'bannerText'        => $banner_text,
-			'showReject'        => (bool) $settings['show_reject_button'],
-			'showPreferences'   => (bool) $settings['show_preferences_button'],
+			'showReject'        => true,
+			'showPreferences'   => true,
 		] );
+	}
+
+	public function output_appearance_css(): void {
+		$defaults = WPCS_Settings::get_defaults()['appearance'];
+		$app      = array_merge( $defaults, (array) ( WPCS_Settings::get( 'appearance' ) ?? [] ) );
+
+		$vars = [
+			'--wpcs-bg-primary'         => $app['bg_primary'],
+			'--wpcs-bg-secondary'       => $app['bg_secondary'],
+			'--wpcs-border'             => $app['border'],
+			'--wpcs-text-primary'       => $app['text_primary'],
+			'--wpcs-text-muted'         => $app['text_muted'],
+			'--wpcs-btn-accept'         => $app['btn_accept'],
+			'--wpcs-btn-accept-hover'   => $app['btn_accept_hover'],
+			'--wpcs-btn-outline-border' => $app['btn_outline_border'],
+			'--wpcs-toggle-active'      => $app['toggle_active'],
+		];
+
+		$css = ':root{';
+		foreach ( $vars as $prop => $val ) {
+			$css .= esc_attr( $prop ) . ':' . esc_attr( $val ) . ';';
+		}
+		$css .= '}';
+
+		$radius = absint( $app['border_radius'] );
+		$fsize  = absint( $app['font_size'] );
+		if ( $fsize > 0 ) {
+			$css .= '.wpcs-banner,.wpcs-modal{font-size:' . $fsize . 'px;}';
+		}
+		if ( $radius !== 4 ) {
+			$css .= '.wpcs-btn{border-radius:' . $radius . 'px;}';
+		}
+
+		echo '<style id="wpcs-appearance">' . $css . '</style>' . "\n";
 	}
 
 	public function output_floating_button(): void {
