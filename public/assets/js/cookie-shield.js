@@ -286,7 +286,10 @@
 			const cats = store.getCategories();
 			gcm.fireUpdate(cats);
 			blocker.release(cats);
-		} else if (cfg.showBanner) {
+		} else {
+			// No valid consent — show banner regardless of how the page was served.
+			// This path runs on every visitor including those served from a full-page
+			// cache (WP Engine, etc.) where PHP-side checks are unreliable.
 			banner.show();
 			document.dispatchEvent(new CustomEvent('wpcs:banner_shown'));
 		}

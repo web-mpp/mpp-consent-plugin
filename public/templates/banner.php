@@ -15,7 +15,7 @@ $policy_page_id = (int) $settings['cookie_policy_page_id'];
 $policy_url     = $policy_page_id > 0 ? get_permalink( $policy_page_id ) : '';
 
 $banner_html = sprintf(
-	'<div id="wpcs-banner" class="wpcs-banner %s" role="banner" aria-label="%s">
+	'<div id="wpcs-banner" class="wpcs-banner %s" role="banner" aria-label="%s" hidden>
 		<div class="wpcs-banner__inner">
 			<p class="wpcs-banner__text">%s%s</p>
 			<div class="wpcs-banner__actions">

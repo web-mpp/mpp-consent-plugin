@@ -105,13 +105,10 @@ class WPCS_Frontend {
 	}
 
 	public function output_banner(): void {
-		$consent = WPCS_ConsentManager::get_instance();
-		$geo     = new WPCS_Geolocation();
-
-		if ( $consent->has_consent() || ! $geo->should_show_banner() ) {
-			return;
-		}
-
+		// Always output the banner HTML regardless of consent state.
+		// Visibility is controlled by JavaScript (store.isValid() check), not PHP.
+		// This is required for full-page caches (WP Engine, etc.) — a PHP-conditional
+		// output would bake the "no banner" state into the cached HTML for all visitors.
 		include WPCS_PLUGIN_DIR . 'public/templates/banner.php';
 	}
 
