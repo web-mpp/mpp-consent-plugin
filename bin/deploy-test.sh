@@ -50,7 +50,16 @@ fi
 
 # ── Normal deploy: push local commits then pull on server ──────────────────
 echo "→ Pushing to origin..."
-git push origin HEAD
+# Load PAT from .env if present (keeps credentials out of git config)
+PAT=""
+if [ -f "$(git rev-parse --show-toplevel)/.env" ]; then
+    PAT=$(grep GIT_PAT_CONSENT_PLUGIN "$(git rev-parse --show-toplevel)/.env" | cut -d= -f2)
+fi
+if [ -n "$PAT" ]; then
+    git -c "url.https://web-mpp:${PAT}@github.com/.insteadOf=https://github.com/" push origin HEAD
+else
+    git push origin HEAD
+fi
 
 echo "→ Pulling on test server..."
 ssh_cmd "
