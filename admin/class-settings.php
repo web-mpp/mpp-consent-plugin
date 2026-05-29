@@ -109,21 +109,32 @@ class WPCS_SettingsAdmin {
 		// Locale texts — read from $input (stale-current bug — see appearance comment above)
 		$output['locale_texts'] = [];
 		if ( isset( $input['locale_texts'] ) && is_array( $input['locale_texts'] ) ) {
+			// Single-line fields
+			$text_fields = [
+				'btn_preferences', 'btn_reject', 'btn_accept',
+				'modal_title', 'modal_accept', 'modal_close', 'modal_save',
+				'cat_essential_label', 'cat_statistics_label',
+				'cat_marketing_label', 'cat_preferences_label',
+			];
+			// Multi-line fields
+			$textarea_fields = [
+				'banner_text', 'modal_intro',
+				'cat_essential_description', 'cat_statistics_description',
+				'cat_marketing_description', 'cat_preferences_description',
+			];
+
 			foreach ( $input['locale_texts'] as $loc => $data ) {
 				if ( ! preg_match( '/^[a-z]{2}(_[A-Z]{2})?$/', $loc ) ) continue;
 
 				if ( is_array( $data ) ) {
-					$output['locale_texts'][ $loc ] = [
-						'banner_text'     => sanitize_textarea_field( $data['banner_text']     ?? '' ),
-						'btn_preferences' => sanitize_text_field(     $data['btn_preferences'] ?? '' ),
-						'btn_reject'      => sanitize_text_field(     $data['btn_reject']      ?? '' ),
-						'btn_accept'      => sanitize_text_field(     $data['btn_accept']      ?? '' ),
-						'modal_title'     => sanitize_text_field(     $data['modal_title']     ?? '' ),
-						'modal_intro'     => sanitize_textarea_field( $data['modal_intro']     ?? '' ),
-						'modal_accept'    => sanitize_text_field(     $data['modal_accept']    ?? '' ),
-						'modal_close'     => sanitize_text_field(     $data['modal_close']     ?? '' ),
-						'modal_save'      => sanitize_text_field(     $data['modal_save']      ?? '' ),
-					];
+					$clean = [];
+					foreach ( $text_fields as $k ) {
+						$clean[ $k ] = sanitize_text_field( $data[ $k ] ?? '' );
+					}
+					foreach ( $textarea_fields as $k ) {
+						$clean[ $k ] = sanitize_textarea_field( $data[ $k ] ?? '' );
+					}
+					$output['locale_texts'][ $loc ] = $clean;
 				} else {
 					// Backwards compat: old plain-string format
 					$output['locale_texts'][ $loc ] = [ 'banner_text' => sanitize_textarea_field( $data ) ];
@@ -186,17 +197,24 @@ class WPCS_SettingsAdmin {
 		$locale     = preg_match( '/^[a-z]{2}(_[A-Z]{2})?$/', $raw_locale ) ? $raw_locale : '';
 
 		if ( $locale ) {
-			$locale_data = [
-				'banner_text'     => sanitize_textarea_field( $_POST['banner_text']     ?? '' ),
-				'btn_preferences' => sanitize_text_field(     $_POST['btn_preferences'] ?? '' ),
-				'btn_reject'      => sanitize_text_field(     $_POST['btn_reject']      ?? '' ),
-				'btn_accept'      => sanitize_text_field(     $_POST['btn_accept']      ?? '' ),
-				'modal_title'     => sanitize_text_field(     $_POST['modal_title']     ?? '' ),
-				'modal_intro'     => sanitize_textarea_field( $_POST['modal_intro']     ?? '' ),
-				'modal_accept'    => sanitize_text_field(     $_POST['modal_accept']    ?? '' ),
-				'modal_close'     => sanitize_text_field(     $_POST['modal_close']     ?? '' ),
-				'modal_save'      => sanitize_text_field(     $_POST['modal_save']      ?? '' ),
+			$text_fields = [
+				'btn_preferences', 'btn_reject', 'btn_accept',
+				'modal_title', 'modal_accept', 'modal_close', 'modal_save',
+				'cat_essential_label', 'cat_statistics_label',
+				'cat_marketing_label', 'cat_preferences_label',
 			];
+			$textarea_fields = [
+				'banner_text', 'modal_intro',
+				'cat_essential_description', 'cat_statistics_description',
+				'cat_marketing_description', 'cat_preferences_description',
+			];
+			$locale_data = [];
+			foreach ( $text_fields as $k ) {
+				$locale_data[ $k ] = sanitize_text_field( $_POST[ $k ] ?? '' );
+			}
+			foreach ( $textarea_fields as $k ) {
+				$locale_data[ $k ] = sanitize_textarea_field( $_POST[ $k ] ?? '' );
+			}
 
 			$locale_texts           = (array) WPCS_Settings::get( 'locale_texts' );
 			$locale_texts[ $locale ] = $locale_data;

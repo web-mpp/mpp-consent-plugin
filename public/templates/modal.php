@@ -36,15 +36,17 @@ ob_start();
 
 		<div class="wpcs-accordion">
 			<?php foreach ( $categories as $key => $cat ) :
-				$is_locked  = ! empty( $cat['locked'] );
-				$is_granted = ! empty( $granted[ $key ] );
+				$is_locked   = ! empty( $cat['locked'] );
+				$is_granted  = ! empty( $granted[ $key ] );
+				$cat_label   = WPCS_Settings::get_locale_string( 'cat_' . $key . '_label',       $cat['label'] );
+				$cat_desc    = WPCS_Settings::get_locale_string( 'cat_' . $key . '_description',  $cat['description'] );
 			?>
 			<div class="wpcs-accordion__item" data-category="<?php echo esc_attr( $key ); ?>">
 				<button type="button"
 				        class="wpcs-accordion__header"
 				        aria-expanded="false"
 				        aria-controls="wpcs-cat-<?php echo esc_attr( $key ); ?>">
-					<span class="wpcs-accordion__label"><?php echo esc_html( $cat['label'] ); ?></span>
+					<span class="wpcs-accordion__label"><?php echo esc_html( $cat_label ); ?></span>
 
 					<?php if ( $is_locked ) : ?>
 						<span class="wpcs-toggle wpcs-toggle--locked"
@@ -66,7 +68,7 @@ ob_start();
 				<div id="wpcs-cat-<?php echo esc_attr( $key ); ?>"
 				     class="wpcs-accordion__body"
 				     hidden>
-					<p><?php echo esc_html( $cat['description'] ); ?></p>
+					<p><?php echo esc_html( $cat_desc ); ?></p>
 					<div class="wpcs-cookie-list" data-category="<?php echo esc_attr( $key ); ?>">
 						<!-- JS populates this from REST /categories -->
 					</div>
