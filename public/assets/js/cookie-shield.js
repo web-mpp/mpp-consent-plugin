@@ -234,6 +234,105 @@
 		}
 	}
 
+	// ─── Locale Swapper ──────────────────────────────────────
+	// Detects the active language from TranslatePress / WPML / Polylang
+	// cookies or the <html lang> attribute, then updates banner and modal
+	// text from the localeTexts map passed by PHP.
+	// This runs client-side so it works correctly even on full-page cached
+	// sites where get_locale() always returns the default language.
+
+	class LocaleSwapper {
+		detect() {
+			// TranslatePress cookie
+			const trp = document.cookie.match(/(?:^|; )trp_language=([^;]+)/);
+			if (trp) return decodeURIComponent(trp[1]);
+
+			// Polylang cookie
+			const pll = document.cookie.match(/(?:^|; )pll_language=([^;]+)/);
+			if (pll) return decodeURIComponent(pll[1]);
+
+			// WPML cookie
+			const wpml = document.cookie.match(/(?:^|; )icl_current_language=([^;]+)/);
+			if (wpml) return decodeURIComponent(wpml[1]);
+
+			// <html lang="fr-CA"> → "fr_CA"
+			const lang = document.documentElement.lang;
+			if (lang && lang !== 'en' && lang !== 'en-US') {
+				return lang.replace('-', '_');
+			}
+
+			return null;
+		}
+
+		apply() {
+			const locale = this.detect();
+			if (!locale || !cfg.localeTexts) return;
+
+			const t = cfg.localeTexts[locale];
+			if (!t) return;
+
+			// Banner text
+			const bannerTextEl = document.querySelector('#wpcs-banner .wpcs-banner__text');
+			if (bannerTextEl && t.banner_text) {
+				// Replace only the first text node (preserve any child links)
+				for (const node of bannerTextEl.childNodes) {
+					if (node.nodeType === Node.TEXT_NODE) {
+						node.textContent = t.banner_text + ' ';
+						break;
+					}
+				}
+			}
+
+			// Banner buttons
+			const setText = (id, val) => {
+				const el = document.getElementById(id);
+				if (el && val) el.textContent = val;
+			};
+			setText('wpcs-open-prefs',    t.btn_preferences);
+			setText('wpcs-reject-all',    t.btn_reject);
+			setText('wpcs-accept-all',    t.btn_accept);
+
+			// Modal
+			setText('wpcs-modal-title',      t.modal_title);
+			setText('wpcs-modal-accept-all', t.modal_accept);
+			setText('wpcs-modal-close-btn',  t.modal_close);
+			setText('wpcs-modal-save',       t.modal_save);
+
+			const introEl = document.querySelector('.wpcs-modal__intro');
+			if (introEl && t.modal_intro) {
+				// Replace text node only, preserve the cookie policy link
+				for (const node of introEl.childNodes) {
+					if (node.nodeType === Node.TEXT_NODE) {
+						node.textContent = t.modal_intro + ' ';
+						break;
+					}
+				}
+			}
+
+			const policyLink = document.querySelector('.wpcs-modal__policy-link');
+			if (policyLink && t.modal_policy_link) policyLink.textContent = t.modal_policy_link;
+
+			// Category labels and descriptions
+			const catMap = {
+				essential:   { label: t.cat_essential_label,   desc: t.cat_essential_description   },
+				statistics:  { label: t.cat_statistics_label,  desc: t.cat_statistics_description  },
+				marketing:   { label: t.cat_marketing_label,   desc: t.cat_marketing_description   },
+				preferences: { label: t.cat_preferences_label, desc: t.cat_preferences_description },
+			};
+
+			Object.entries(catMap).forEach(([cat, vals]) => {
+				const item = document.querySelector(`.wpcs-accordion__item[data-category="${cat}"]`);
+				if (!item) return;
+
+				const labelEl = item.querySelector('.wpcs-accordion__label');
+				if (labelEl && vals.label) labelEl.textContent = vals.label;
+
+				const descEl = item.querySelector('.wpcs-accordion__body p');
+				if (descEl && vals.desc) descEl.textContent = vals.desc;
+			});
+		}
+	}
+
 	// ─── Boot ─────────────────────────────────────────────────
 
 	const store   = new ConsentStore();
@@ -242,6 +341,7 @@
 	const banner  = new Banner();
 	const modal   = new Modal();
 	const logger  = new ConsentLogger();
+	const swapper = new LocaleSwapper();
 
 	function applyConsent(categories, method) {
 		const { uuid } = store.save(categories, method);
@@ -282,14 +382,15 @@
 	}
 
 	document.addEventListener('DOMContentLoaded', () => {
+		// Apply locale text swaps before anything is shown so the correct
+		// language appears even on cached pages (WP Engine + TranslatePress).
+		swapper.apply();
+
 		if (store.isValid()) {
 			const cats = store.getCategories();
 			gcm.fireUpdate(cats);
 			blocker.release(cats);
 		} else {
-			// No valid consent — show banner regardless of how the page was served.
-			// This path runs on every visitor including those served from a full-page
-			// cache (WP Engine, etc.) where PHP-side checks are unreliable.
 			banner.show();
 			document.dispatchEvent(new CustomEvent('wpcs:banner_shown'));
 		}

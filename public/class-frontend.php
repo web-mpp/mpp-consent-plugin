@@ -38,15 +38,23 @@ class WPCS_Frontend {
 		$settings = WPCS_Settings::get();
 		$geo      = new WPCS_Geolocation();
 
-		$locale       = get_locale();
-		$locale_texts = (array) ( $settings['locale_texts'] ?? [] );
-		$banner_text  = $locale_texts[ $locale ] ?? $settings['banner_text'];
-
-		// Consent expiry = minimum expiry across all opt-in (non-locked) categories, fallback to global
+		// Consent expiry = minimum expiry across all opt-in (non-locked) categories
 		$expiry_days = (int) ( $settings['consent_expiry_days'] ?? 30 );
 		foreach ( $settings['categories'] as $cat ) {
 			if ( empty( $cat['locked'] ) && isset( $cat['expiry_days'] ) ) {
 				$expiry_days = min( $expiry_days, (int) $cat['expiry_days'] );
+			}
+		}
+
+		// Pass all enabled locale translations to JS so it can swap text client-side.
+		// This is necessary for full-page cached sites (WP Engine) + JS-based translation
+		// plugins (TranslatePress, Polylang, WPML) where get_locale() may return the
+		// default language on cached requests.
+		$raw_locale_texts = (array) ( $settings['locale_texts'] ?? [] );
+		$locale_texts_js  = [];
+		foreach ( $raw_locale_texts as $loc => $data ) {
+			if ( is_array( $data ) ) {
+				$locale_texts_js[ $loc ] = $data;
 			}
 		}
 
@@ -55,13 +63,10 @@ class WPCS_Frontend {
 			'nonce'             => wp_create_nonce( 'wpcs_consent' ),
 			'policyVersion'     => $settings['policy_version'],
 			'expiryDays'        => $expiry_days,
-			'showBanner'        => ! $consent->has_consent() && $geo->should_show_banner(),
 			'autoDenyMarketing' => $consent->should_auto_deny_marketing(),
 			'categories'        => array_keys( $settings['categories'] ),
 			'categoryLabels'    => array_map( fn( $c ) => $c['label'], $settings['categories'] ),
-			'bannerText'        => $banner_text,
-			'showReject'        => true,
-			'showPreferences'   => true,
+			'localeTexts'       => $locale_texts_js,
 		] );
 	}
 
