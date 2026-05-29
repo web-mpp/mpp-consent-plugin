@@ -51,9 +51,10 @@ fi
 # ── Normal deploy: push local commits then pull on server ──────────────────
 echo "→ Pushing to origin..."
 # Load PAT from .env if present (keeps credentials out of git config)
+ROOT="$(git rev-parse --show-toplevel)"
 PAT=""
-if [ -f "$(git rev-parse --show-toplevel)/.env" ]; then
-    PAT=$(grep GIT_PAT_CONSENT_PLUGIN "$(git rev-parse --show-toplevel)/.env" | cut -d= -f2)
+if [ -f "$ROOT/.env" ]; then
+    PAT=$(grep GIT_PAT_CONSENT_PLUGIN "$ROOT/.env" | cut -d= -f2)
 fi
 if [ -n "$PAT" ]; then
     git -c "url.https://web-mpp:${PAT}@github.com/.insteadOf=https://github.com/" push origin HEAD
@@ -62,9 +63,6 @@ else
 fi
 
 echo "→ Pulling on test server..."
-ssh_cmd "
-    cd '$REMOTE_PATH'
-    git pull --ff-only
-"
+ssh_cmd "cd '$REMOTE_PATH' && git pull --ff-only"
 
 echo "✓ Deployed. WordPress picks up PHP changes immediately (no restart needed)."
