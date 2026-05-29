@@ -15,8 +15,9 @@ $banner_html = sprintf(
 		<div class="wpcs-banner__inner">
 			<p class="wpcs-banner__text">%s%s</p>
 			<div class="wpcs-banner__actions">
-				%s%s
-				<button type="button" id="wpcs-accept-all" class="wpcs-btn wpcs-btn--accept" aria-label="%s">%s</button>
+				<button type="button" id="wpcs-open-prefs" class="wpcs-btn wpcs-btn--outline" aria-label="%s">%s</button>
+				<button type="button" id="wpcs-reject-all" class="wpcs-btn wpcs-btn--outline" aria-label="%s">%s</button>
+				<button type="button" id="wpcs-accept-all" class="wpcs-btn wpcs-btn--accept"  aria-label="%s">%s</button>
 			</div>
 		</div>
 	</div>',
@@ -24,8 +25,10 @@ $banner_html = sprintf(
 	esc_attr__( 'Cookie consent banner', 'wp-cookie-shield' ),
 	esc_html( $text ),
 	$policy_url ? ' <a href="' . esc_url( $policy_url ) . '" class="wpcs-banner__policy-link">' . esc_html__( 'Cookie Policy', 'wp-cookie-shield' ) . '</a>' : '',
-	$settings['show_preferences_button'] ? '<button type="button" id="wpcs-open-prefs" class="wpcs-btn wpcs-btn--outline" aria-label="' . esc_attr__( 'Open cookie preferences', 'wp-cookie-shield' ) . '">' . esc_html__( 'Preferences', 'wp-cookie-shield' ) . '</button>' : '',
-	$settings['show_reject_button'] ? '<button type="button" id="wpcs-reject-all" class="wpcs-btn wpcs-btn--outline" aria-label="' . esc_attr__( 'Reject all non-essential cookies', 'wp-cookie-shield' ) . '">' . esc_html__( 'Reject', 'wp-cookie-shield' ) . '</button>' : '',
+	esc_attr__( 'Open cookie preferences', 'wp-cookie-shield' ),
+	esc_html__( 'Preferences', 'wp-cookie-shield' ),
+	esc_attr__( 'Reject all non-essential cookies', 'wp-cookie-shield' ),
+	esc_html__( 'Reject', 'wp-cookie-shield' ),
 	esc_attr__( 'Accept all cookies', 'wp-cookie-shield' ),
 	esc_html__( 'Accept All', 'wp-cookie-shield' )
 );

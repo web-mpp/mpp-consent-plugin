@@ -6,51 +6,143 @@
       {"name": "_ga",   "duration": "2 years",  "purpose": "Distinguishes unique users"},
       {"name": "_ga_*", "duration": "2 years",  "purpose": "Persists session state"},
       {"name": "_gid",  "duration": "24 hours", "purpose": "Distinguishes users"},
+      {"name": "_gat",  "duration": "1 minute", "purpose": "Throttle request rate"},
+      {"name": "NID",   "duration": "6 months", "purpose": "Google preferences"}
+    ]
+  },
+  "google-analytics-for-wordpress": {
+    "provider": "Google Analytics (MonsterInsights)",
+    "category": "statistics",
+    "cookies": [
+      {"name": "_ga",   "duration": "2 years",  "purpose": "Distinguishes unique users"},
+      {"name": "_ga_*", "duration": "2 years",  "purpose": "Persists session state"},
+      {"name": "_gid",  "duration": "24 hours", "purpose": "Distinguishes users"},
       {"name": "_gat",  "duration": "1 minute", "purpose": "Throttle request rate"}
+    ]
+  },
+  "monsterinsights": {
+    "provider": "Google Analytics (MonsterInsights)",
+    "category": "statistics",
+    "cookies": [
+      {"name": "_ga",   "duration": "2 years",  "purpose": "Distinguishes unique users"},
+      {"name": "_ga_*", "duration": "2 years",  "purpose": "Persists session state"},
+      {"name": "_gid",  "duration": "24 hours", "purpose": "Distinguishes users"},
+      {"name": "_gat",  "duration": "1 minute", "purpose": "Throttle request rate"}
+    ]
+  },
+  "exactmetrics": {
+    "provider": "Google Analytics (ExactMetrics)",
+    "category": "statistics",
+    "cookies": [
+      {"name": "_ga",   "duration": "2 years",  "purpose": "Distinguishes unique users"},
+      {"name": "_ga_*", "duration": "2 years",  "purpose": "Persists session state"},
+      {"name": "_gid",  "duration": "24 hours", "purpose": "Distinguishes users"},
+      {"name": "_gat",  "duration": "1 minute", "purpose": "Throttle request rate"}
+    ]
+  },
+  "leadin": {
+    "provider": "HubSpot",
+    "category": "marketing",
+    "cookies": [
+      {"name": "__hssc",     "duration": "session",   "purpose": "HubSpot session counter"},
+      {"name": "__hssrc",    "duration": "session",   "purpose": "HubSpot new-session marker"},
+      {"name": "__hstc",     "duration": "13 months", "purpose": "HubSpot main visitor tracking cookie"},
+      {"name": "hubspotutk", "duration": "13 months", "purpose": "HubSpot user token for de-duplication of contacts"}
+    ]
+  },
+  "hubspot": {
+    "provider": "HubSpot",
+    "category": "marketing",
+    "cookies": [
+      {"name": "__hssc",     "duration": "session",   "purpose": "HubSpot session counter"},
+      {"name": "__hssrc",    "duration": "session",   "purpose": "HubSpot new-session marker"},
+      {"name": "__hstc",     "duration": "13 months", "purpose": "HubSpot main visitor tracking cookie"},
+      {"name": "hubspotutk", "duration": "13 months", "purpose": "HubSpot user token for de-duplication of contacts"}
+    ]
+  },
+  "translatepress-multilingual": {
+    "provider": "TranslatePress",
+    "category": "preferences",
+    "cookies": [
+      {"name": "trp_language", "duration": "1 year", "purpose": "Stores the visitor's selected language"}
+    ]
+  },
+  "translatepress": {
+    "provider": "TranslatePress",
+    "category": "preferences",
+    "cookies": [
+      {"name": "trp_language", "duration": "1 year", "purpose": "Stores the visitor's selected language"}
+    ]
+  },
+  "polylang": {
+    "provider": "Polylang",
+    "category": "preferences",
+    "cookies": [
+      {"name": "pll_language", "duration": "1 year", "purpose": "Stores the visitor's selected language"}
+    ]
+  },
+  "sitepress-multilingual-cms": {
+    "provider": "WPML",
+    "category": "preferences",
+    "cookies": [
+      {"name": "icl_current_language", "duration": "1 day",  "purpose": "WPML active language"},
+      {"name": "_icl_visitor_lang_js", "duration": "1 day",  "purpose": "WPML JS language"},
+      {"name": "wpml_referer_url",      "duration": "session","purpose": "WPML referrer tracking"}
     ]
   },
   "woocommerce": {
     "provider": "WooCommerce",
     "category": "essential",
     "cookies": [
-      {"name": "woocommerce_cart_hash",     "duration": "session", "purpose": "Stores cart hash"},
-      {"name": "woocommerce_items_in_cart", "duration": "session", "purpose": "Cart item count"},
-      {"name": "wc_session_cookie_*",       "duration": "2 days",  "purpose": "WooCommerce session"}
+      {"name": "woocommerce_cart_hash",     "duration": "session", "purpose": "Stores cart hash to determine when cart contents change"},
+      {"name": "woocommerce_items_in_cart", "duration": "session", "purpose": "Helps WooCommerce determine when cart contents have changed"},
+      {"name": "wc_session_cookie_*",       "duration": "2 days",  "purpose": "Contains a unique code for each customer session"},
+      {"name": "woocommerce_recently_viewed", "duration": "1 day", "purpose": "Tracks recently viewed products"},
+      {"name": "store_notice*",             "duration": "session", "purpose": "Tracks store notice dismissal"}
     ]
   },
   "jetpack": {
     "provider": "Automattic / Jetpack",
     "category": "statistics",
     "cookies": [
-      {"name": "_jetpack_*", "duration": "session", "purpose": "Jetpack stats"},
+      {"name": "_jetpack_*", "duration": "session", "purpose": "Jetpack stats tracking"},
       {"name": "__jid",      "duration": "session", "purpose": "Jetpack identity"}
     ]
   },
   "facebook-for-woocommerce": {
-    "provider": "Meta",
+    "provider": "Meta (Facebook)",
     "category": "marketing",
     "cookies": [
-      {"name": "_fbp", "duration": "3 months", "purpose": "Facebook Pixel browser ID"},
-      {"name": "_fbc", "duration": "3 months", "purpose": "Facebook click ID"},
+      {"name": "_fbp", "duration": "3 months", "purpose": "Facebook Pixel browser identifier"},
+      {"name": "_fbc", "duration": "3 months", "purpose": "Facebook click identifier"},
       {"name": "fr",   "duration": "3 months", "purpose": "Facebook ad delivery and measurement"}
+    ]
+  },
+  "pixel-cat": {
+    "provider": "Meta (Facebook)",
+    "category": "marketing",
+    "cookies": [
+      {"name": "_fbp", "duration": "3 months", "purpose": "Facebook Pixel browser identifier"},
+      {"name": "_fbc", "duration": "3 months", "purpose": "Facebook click identifier"}
+    ]
+  },
+  "official-facebook-pixel": {
+    "provider": "Meta (Facebook)",
+    "category": "marketing",
+    "cookies": [
+      {"name": "_fbp", "duration": "3 months", "purpose": "Facebook Pixel browser identifier"},
+      {"name": "_fbc", "duration": "3 months", "purpose": "Facebook click identifier"}
     ]
   },
   "hotjar": {
     "provider": "Hotjar",
     "category": "statistics",
     "cookies": [
-      {"name": "_hjid",         "duration": "1 year",   "purpose": "Hotjar user ID"},
-      {"name": "_hjFirstSeen",  "duration": "session",  "purpose": "First session marker"},
-      {"name": "_hjSession_*",  "duration": "30 mins",  "purpose": "Current session data"},
-      {"name": "_hjSessionUser_*", "duration": "1 year","purpose": "Session user continuity"}
-    ]
-  },
-  "elementor": {
-    "provider": "Elementor",
-    "category": "preferences",
-    "cookies": [
-      {"name": "elementor_viewed_27_days", "duration": "27 days", "purpose": "Tracks Elementor popups"},
-      {"name": "_elementor_*",             "duration": "session", "purpose": "Elementor editor state"}
+      {"name": "_hjid",             "duration": "1 year",   "purpose": "Hotjar user identifier"},
+      {"name": "_hjFirstSeen",      "duration": "session",  "purpose": "First-session marker"},
+      {"name": "_hjSession_*",      "duration": "30 mins",  "purpose": "Current session data"},
+      {"name": "_hjSessionUser_*",  "duration": "1 year",   "purpose": "Session user continuity"},
+      {"name": "_hjAbsoluteSessionInProgress", "duration": "30 mins", "purpose": "Hotjar session in progress"}
     ]
   },
   "linkedin-insight-tag": {
@@ -59,12 +151,72 @@
     "cookies": [
       {"name": "li_at",                "duration": "1 year",  "purpose": "LinkedIn authentication"},
       {"name": "AnalyticsSyncHistory", "duration": "1 month", "purpose": "LinkedIn analytics sync"},
-      {"name": "bcookie",              "duration": "2 years", "purpose": "LinkedIn browser ID"},
-      {"name": "bscookie",             "duration": "2 years", "purpose": "LinkedIn secure browser ID"}
+      {"name": "bcookie",              "duration": "2 years", "purpose": "LinkedIn browser identifier"},
+      {"name": "bscookie",             "duration": "2 years", "purpose": "LinkedIn secure browser identifier"},
+      {"name": "li_gc",                "duration": "6 months","purpose": "LinkedIn consent cookie"},
+      {"name": "UserMatchHistory",     "duration": "1 month", "purpose": "LinkedIn Ads ID syncing"}
     ]
+  },
+  "elementor": {
+    "provider": "Elementor",
+    "category": "preferences",
+    "cookies": [
+      {"name": "elementor_viewed_27_days", "duration": "27 days", "purpose": "Tracks Elementor popup views"},
+      {"name": "_elementor_*",             "duration": "session", "purpose": "Elementor editor state"}
+    ]
+  },
+  "wordpress-seo": {
+    "provider": "Yoast SEO",
+    "category": "essential",
+    "cookies": []
+  },
+  "rank-math": {
+    "provider": "Rank Math SEO",
+    "category": "essential",
+    "cookies": []
+  },
+  "all-in-one-seo-pack": {
+    "provider": "All in One SEO",
+    "category": "essential",
+    "cookies": []
+  },
+  "wpforms-lite": {
+    "provider": "WPForms",
+    "category": "essential",
+    "cookies": []
+  },
+  "wpforms": {
+    "provider": "WPForms",
+    "category": "essential",
+    "cookies": []
+  },
+  "gravityforms": {
+    "provider": "Gravity Forms",
+    "category": "essential",
+    "cookies": [
+      {"name": "gform_*", "duration": "session", "purpose": "Gravity Forms multi-step form progress"}
+    ]
+  },
+  "ninja-forms": {
+    "provider": "Ninja Forms",
+    "category": "essential",
+    "cookies": []
   },
   "contact-form-7": {
     "provider": "Contact Form 7",
+    "category": "essential",
+    "cookies": []
+  },
+  "wordfence": {
+    "provider": "Wordfence Security",
+    "category": "essential",
+    "cookies": [
+      {"name": "wfwaf-authcookie-*", "duration": "session", "purpose": "Wordfence firewall authentication"},
+      {"name": "wordfence_verifiedHuman", "duration": "1 day", "purpose": "Wordfence human verification"}
+    ]
+  },
+  "really-simple-ssl": {
+    "provider": "Really Simple SSL",
     "category": "essential",
     "cookies": []
   },
@@ -73,7 +225,22 @@
     "category": "essential",
     "cookies": []
   },
+  "w3-total-cache": {
+    "provider": "W3 Total Cache",
+    "category": "essential",
+    "cookies": []
+  },
+  "wp-super-cache": {
+    "provider": "WP Super Cache",
+    "category": "essential",
+    "cookies": []
+  },
   "mailchimp-for-wp": {
+    "provider": "Mailchimp for WordPress",
+    "category": "essential",
+    "cookies": []
+  },
+  "mc4wp-mailchimp-for-wordpress": {
     "provider": "Mailchimp for WordPress",
     "category": "essential",
     "cookies": []
@@ -82,14 +249,22 @@
     "provider": "Crisp",
     "category": "statistics",
     "cookies": [
-      {"name": "crisp-client/*", "duration": "6 months", "purpose": "Crisp chat session"}
+      {"name": "crisp-client/*", "duration": "6 months", "purpose": "Crisp chat session identifier"}
+    ]
+  },
+  "tawk-to-live-chat": {
+    "provider": "Tawk.to",
+    "category": "statistics",
+    "cookies": [
+      {"name": "TawkConnectionTime", "duration": "session", "purpose": "Tawk.to chat session"},
+      {"name": "ss",                 "duration": "session", "purpose": "Tawk.to session identifier"}
     ]
   },
   "intercom": {
     "provider": "Intercom",
     "category": "statistics",
     "cookies": [
-      {"name": "intercom-id-*",      "duration": "9 months", "purpose": "Intercom visitor ID"},
+      {"name": "intercom-id-*",      "duration": "9 months", "purpose": "Intercom visitor identifier"},
       {"name": "intercom-session-*", "duration": "1 week",   "purpose": "Intercom session"}
     ]
   },
@@ -97,9 +272,9 @@
     "provider": "Cloudflare",
     "category": "essential",
     "cookies": [
-      {"name": "__cflb",      "duration": "session", "purpose": "Load balancer affinity"},
-      {"name": "__cf_bm",     "duration": "30 mins", "purpose": "Bot management"},
-      {"name": "cf_clearance","duration": "1 day",   "purpose": "Cloudflare challenge clearance"}
+      {"name": "__cflb",       "duration": "session", "purpose": "Load balancer affinity"},
+      {"name": "__cf_bm",      "duration": "30 mins", "purpose": "Bot management"},
+      {"name": "cf_clearance", "duration": "1 day",   "purpose": "Cloudflare challenge clearance"}
     ]
   },
   "recaptcha": {
@@ -108,5 +283,47 @@
     "cookies": [
       {"name": "_GRECAPTCHA", "duration": "6 months", "purpose": "reCAPTCHA fraud prevention"}
     ]
+  },
+  "google-captcha": {
+    "provider": "Google reCAPTCHA",
+    "category": "essential",
+    "cookies": [
+      {"name": "_GRECAPTCHA", "duration": "6 months", "purpose": "reCAPTCHA fraud prevention"}
+    ]
+  },
+  "revslider": {
+    "provider": "Slider Revolution",
+    "category": "essential",
+    "cookies": []
+  },
+  "ninja-tables": {
+    "provider": "Ninja Tables",
+    "category": "essential",
+    "cookies": []
+  },
+  "redirection": {
+    "provider": "Redirection",
+    "category": "essential",
+    "cookies": []
+  },
+  "akismet": {
+    "provider": "Akismet",
+    "category": "essential",
+    "cookies": []
+  },
+  "updraftplus": {
+    "provider": "UpdraftPlus",
+    "category": "essential",
+    "cookies": []
+  },
+  "the-events-calendar": {
+    "provider": "The Events Calendar",
+    "category": "essential",
+    "cookies": []
+  },
+  "advanced-custom-fields": {
+    "provider": "Advanced Custom Fields",
+    "category": "essential",
+    "cookies": []
   }
 }
