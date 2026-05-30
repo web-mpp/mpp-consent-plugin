@@ -22,7 +22,9 @@ class WPCS_RestAPI {
 		register_rest_route( self::NAMESPACE, '/consent/(?P<uuid>[a-f0-9\-]+)', [
 			'methods'             => 'GET',
 			'callback'            => [ $this, 'get_consent' ],
-			'permission_callback' => '__return_true',
+			'permission_callback' => function () {
+				return current_user_can( 'manage_options' );
+			},
 		] );
 
 		register_rest_route( self::NAMESPACE, '/categories', [
@@ -35,7 +37,7 @@ class WPCS_RestAPI {
 			'methods'             => 'POST',
 			'callback'            => [ $this, 'trigger_scan' ],
 			'permission_callback' => function () {
-				return current_user_can( 'edit_posts' );
+				return current_user_can( 'manage_options' );
 			},
 		] );
 	}

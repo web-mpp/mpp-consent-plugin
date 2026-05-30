@@ -17,16 +17,17 @@ class WPCS_ConsentLogger {
 		$expiry_days  = absint( $settings['consent_expiry_days'] ?? 365 );
 		$expires_at   = gmdate( 'Y-m-d H:i:s', time() + $expiry_days * DAY_IN_SECONDS );
 
-		$ip  = $_SERVER['REMOTE_ADDR'] ?? '';
-		$ua  = $_SERVER['HTTP_USER_AGENT'] ?? '';
+		$ip   = $_SERVER['REMOTE_ADDR'] ?? '';
+		$ua   = $_SERVER['HTTP_USER_AGENT'] ?? '';
+		$salt = wp_salt( 'auth' );
 
 		$result = $wpdb->insert(
 			$wpdb->prefix . 'wpcs_consent_log',
 			[
 				'consent_uuid'    => sanitize_text_field( $uuid ),
 				'user_id'         => get_current_user_id() ?: null,
-				'ip_hash'         => hash( 'sha256', $ip ),
-				'user_agent_hash' => hash( 'sha256', $ua ),
+				'ip_hash'         => hash_hmac( 'sha256', $ip, $salt ),
+				'user_agent_hash' => hash_hmac( 'sha256', $ua, $salt ),
 				'consent_json'    => wp_json_encode( $categories ),
 				'method'          => sanitize_key( $method ),
 				'version'         => sanitize_text_field( $settings['policy_version'] ?? '1.0' ),

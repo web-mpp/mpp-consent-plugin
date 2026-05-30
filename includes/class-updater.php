@@ -204,6 +204,8 @@ class WPCS_Updater {
 				return $asset['browser_download_url'];
 			}
 		}
-		return $release['zipball_url'] ?? '';
+		// No curated release asset found — do not fall back to the raw source tarball,
+		// which would include dev files excluded from the build ZIP.
+		return '';
 	}
 }
