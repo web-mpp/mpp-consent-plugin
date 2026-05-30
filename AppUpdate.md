@@ -168,6 +168,11 @@ Or just run `bash bin/deploy-test.sh` which will `git pull` the version-bumped c
 | 1.0.2   | 2026-05-29 | Fix: checkbox settings reset when saving from a different tab |
 | 1.0.3   | 2026-05-29 | Fix: update notification not appearing on WP Engine / cached hosts |
 | 1.0.4   | 2026-05-29 | Banner text centered; cookie policy link in preferences modal |
+| 1.0.5   | 2026-05-29 | Fix: saving any tab reverts settings from other tabs |
+| 1.0.6   | 2026-05-29 | Fix: French translation not applying on cached sites (TranslatePress) |
+| 1.0.7   | 2026-05-29 | Fix: banner not showing on full-page cached sites (WP Engine) |
+| 1.0.8   | 2026-05-29 | Fix: critical PHP TypeError causing site-down on PHP 8.1 |
+| 1.0.9   | 2026-05-29 | Security: salted IP hashing, tightened REST permissions, removed tarball fallback |
 
 *Add a row here each release.*
 
