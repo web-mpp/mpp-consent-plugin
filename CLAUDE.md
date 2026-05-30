@@ -964,6 +964,8 @@ Before any release, all the following must pass:
 
 ## 21. Build & Deployment
 
+> **Releasing a new version to clients?** Follow `AppUpdate.md` in the project root — it is the step-by-step release runbook (version bump → ZIP → commit → tag → GitHub release → verify). The commands below cover individual build tasks only.
+
 ```bash
 # Install JS dependencies
 npm install
@@ -998,6 +1000,17 @@ npm run build:zip
   }
 }
 ```
+
+### Release checklist (summary — full steps in `AppUpdate.md`)
+
+1. Make and test changes on test server
+2. Bump version in `wp-cookie-shield.php` (header + `WPCS_VERSION` constant)
+3. Build ZIP using the PowerShell block in `AppUpdate.md` Step 3
+4. Commit and push to `master` using PAT from `.env`
+5. Tag the release (`git tag vX.X.X`) and push the tag
+6. Create GitHub release + upload ZIP via the PowerShell block in `AppUpdate.md` Step 6
+7. Verify update appears on test server; confirm `update: none` after applying
+8. Add a row to the version history table in `AppUpdate.md`
 
 ---
 
