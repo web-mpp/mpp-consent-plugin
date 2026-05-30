@@ -184,3 +184,44 @@ Or just run `bash bin/deploy-test.sh` which will `git pull` the version-bumped c
 - The ZIP must be named **`wp-cookie-shield.zip`** and must unzip to a folder named **`wp-cookie-shield/`** — the updater's `fix_folder_name()` handles this automatically.
 - The `.env` file contains the PAT and is excluded from git and from the ZIP.
 - Client sites update via **WP Admin → Plugins → Update** — no manual file upload needed.
+
+---
+
+## First-Time Install on a New Site (SCP method)
+
+Use this when installing on a new server/site manually (not via the GitHub auto-updater).
+
+### 1. Create the plugin directory and copy files
+
+```bash
+ssh -i ~/.ssh/mppdev_key mppdev@35.183.253.194 "mkdir -p /var/www/vhosts/mppdev.net/<site>/wp-content/plugins/wp-cookie-shield"
+scp -i ~/.ssh/mppdev_key -r "C:\Work\MPP\Apps\mpp-consent-plugin\." mppdev@35.183.253.194:/var/www/vhosts/mppdev.net/<site>/wp-content/plugins/wp-cookie-shield/
+```
+
+### 2. Fix permissions immediately after SCP — THIS IS MANDATORY
+
+SCP from Windows corrupts permissions on some subdirectories to `000`, making the plugin invisible in WP Admin even though WP-CLI reports it as active. Always run this after any SCP deploy to a new site:
+
+```bash
+ssh -i ~/.ssh/mppdev_key mppdev@35.183.253.194 "chmod -R 755 /var/www/vhosts/mppdev.net/<site>/wp-content/plugins/wp-cookie-shield/ && find /var/www/vhosts/mppdev.net/<site>/wp-content/plugins/wp-cookie-shield/ -type f -exec chmod 644 {} \;"
+```
+
+### 3. Activate via WP-CLI
+
+```bash
+ssh -i ~/.ssh/mppdev_key mppdev@35.183.253.194 "/opt/plesk/php/8.2/bin/php /usr/local/bin/wp --path=/var/www/vhosts/mppdev.net/<site> plugin activate wp-cookie-shield"
+```
+
+### Symptom if you skip Step 2
+
+- WP-CLI shows plugin as `active`
+- WP Admin plugins page does not show the plugin at all
+- Manual upload via WP Admin shows "Plugin file does not exist" on activation
+- Root cause: `public/assets/css` and `public/assets/js` directories get `000` permissions from Windows SCP
+
+### Known installs
+
+| Site | Installed | Method |
+|---|---|---|
+| test.mppdev.net | 2026-05-28 | SCP |
+| messer.mppdev.net | 2026-05-30 | SCP + permission fix |
